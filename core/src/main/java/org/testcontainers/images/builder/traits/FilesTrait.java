@@ -3,6 +3,7 @@ package org.testcontainers.images.builder.traits;
 import org.testcontainers.utility.MountableFile;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
@@ -50,6 +51,17 @@ public interface FilesTrait<SELF extends FilesTrait<SELF> & BuildContextBuilderT
      * @return self
      */
     default SELF withFileFromPath(String path, Path filePath, Integer mode) {
+        final boolean fileStoredToDir = Files.isRegularFile(filePath) &&
+            (path.endsWith("/")
+                || path.endsWith("/.")
+                || path.endsWith("/..")
+                || path.endsWith("./")
+                || path.endsWith("../")
+                || ".".equals(path)
+                || "..".equals(path));
+        if (fileStoredToDir) {
+            throw new IllegalArgumentException("Unable to store file '" + filePath + "' to docker path '" + path + "'");
+        }
         final MountableFile mountableFile = MountableFile.forHostPath(filePath, mode);
         return ((SELF) this).withFileFromTransferable(path, mountableFile);
     }
