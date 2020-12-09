@@ -41,8 +41,8 @@ public class TimeLimitedLoggedPullImageResultCallback extends LoggedPullImageRes
     // All threads that are 'awaiting' this pull
     private final Set<Thread> waitingThreads = new HashSet<>();
 
-    public TimeLimitedLoggedPullImageResultCallback(Logger logger) {
-        super(logger);
+    public TimeLimitedLoggedPullImageResultCallback(Logger logger, final String canonicalImageName) {
+        super(logger, canonicalImageName);
         this.logger = logger;
     }
 

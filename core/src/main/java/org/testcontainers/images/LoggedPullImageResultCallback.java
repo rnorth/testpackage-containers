@@ -3,6 +3,7 @@ package org.testcontainers.images;
 import com.github.dockerjava.api.command.PullImageResultCallback;
 import com.github.dockerjava.api.model.PullResponseItem;
 import org.slf4j.Logger;
+import org.testcontainers.utility.ImagePullCountLogger;
 
 import java.io.Closeable;
 import java.time.Duration;
@@ -17,6 +18,7 @@ import static org.apache.commons.io.FileUtils.byteCountToDisplaySize;
  */
 class LoggedPullImageResultCallback extends PullImageResultCallback {
     private final Logger logger;
+    private final String canonicalImageName;
 
     private final Set<String> allLayers = new HashSet<>();
     private final Set<String> downloadedLayers = new HashSet<>();
@@ -26,8 +28,9 @@ class LoggedPullImageResultCallback extends PullImageResultCallback {
     private boolean completed;
     private Instant start;
 
-    LoggedPullImageResultCallback(final Logger logger) {
+    LoggedPullImageResultCallback(final Logger logger, final String canonicalImageName) {
         this.logger = logger;
+        this.canonicalImageName = canonicalImageName;
     }
 
     @Override
@@ -109,6 +112,8 @@ class LoggedPullImageResultCallback extends PullImageResultCallback {
                 byteCountToDisplaySize(downloadedLayerSize),
                 byteCountToDisplaySize(downloadedLayerSize / duration));
         }
+
+        ImagePullCountLogger.instance().recordPull(canonicalImageName);
     }
 
     private long downloadedLayerSize() {
