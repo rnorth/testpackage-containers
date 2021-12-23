@@ -6,4 +6,6 @@ dependencies {
 
     testImplementation project(':jdbc-test')
     testImplementation 'ru.yandex.clickhouse:clickhouse-jdbc:0.3.1-patch'
+    testImplementation 'mysql:mysql-connector-java:8.0.24'
+    testImplementation 'io.vertx:vertx-mysql-client:4.0.2'
 }

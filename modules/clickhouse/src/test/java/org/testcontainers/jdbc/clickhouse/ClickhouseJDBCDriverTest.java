@@ -16,6 +16,8 @@ public class ClickhouseJDBCDriverTest extends AbstractJDBCDriverTest {
         return asList(
             new Object[][]{
                 {"jdbc:tc:clickhouse://hostname/databasename", EnumSet.of(Options.PmdKnownBroken)},
+                //Not testing jdbc:tc:mysql here because the connection pool used by AbstractJDBCDriverTest tries
+                //to several things that aren't currently support by the clickhouse-mysql-impl
             });
     }
 }

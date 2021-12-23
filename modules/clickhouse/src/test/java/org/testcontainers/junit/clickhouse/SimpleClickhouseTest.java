@@ -1,26 +1,45 @@
 package org.testcontainers.junit.clickhouse;
 
+import io.vertx.core.Future;
+import io.vertx.core.Vertx;
+import io.vertx.mysqlclient.MySQLConnectOptions;
+import io.vertx.mysqlclient.MySQLConnection;
+import io.vertx.sqlclient.Row;
+import io.vertx.sqlclient.RowSet;
 import org.junit.Test;
+import org.testcontainers.containers.ClickHouseInit;
 import org.testcontainers.containers.ClickHouseContainer;
-import org.testcontainers.db.AbstractContainerDatabaseTest;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.concurrent.CountDownLatch;
 
-import static org.rnorth.visibleassertions.VisibleAssertions.assertEquals;
-import static org.testcontainers.ClickhouseTestImages.CLICKHOUSE_IMAGE;
+import static org.junit.Assert.assertFalse;
 
-public class SimpleClickhouseTest extends AbstractContainerDatabaseTest {
+public class SimpleClickhouseTest {
 
     @Test
-    public void testSimple() throws SQLException {
-        try (ClickHouseContainer clickhouse = new ClickHouseContainer(CLICKHOUSE_IMAGE)) {
-            clickhouse.start();
+    public void testRawMysql() throws Throwable {
+        try(ClickHouseContainer clickHouseContainer = new ClickHouseContainer()) {
+            clickHouseContainer.start();
 
-            ResultSet resultSet = performQuery(clickhouse, "SELECT 1");
+            MySQLConnectOptions connectOptions = new MySQLConnectOptions()
+                .setPort(clickHouseContainer.getMappedPort(ClickHouseInit.MYSQL_PORT))
+                .setHost(clickHouseContainer.getHost())
+                .setDatabase(clickHouseContainer.getDatabaseName())
+                .setUser(clickHouseContainer.getUsername())
+                .setPassword(clickHouseContainer.getPassword());
 
-            int resultSetInt = resultSet.getInt(1);
-            assertEquals("A basic SELECT query succeeds", 1, resultSetInt);
+            CountDownLatch lock = new CountDownLatch(1);
+
+            Vertx vertx = Vertx.vertx();
+            Future<RowSet<Row>> result = MySQLConnection
+                .connect(vertx, connectOptions)
+                .flatMap(conn -> conn.query("SELECT 1;").execute())
+                .onComplete(r -> lock.countDown());
+
+            lock.await();
+
+            assertFalse(result.failed());
         }
     }
+
 }
