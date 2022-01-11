@@ -13,8 +13,7 @@ public class ChromeWebDriverContainerTest extends BaseWebDriverContainerTest {
 
     // junitRule {
     @Rule
-    public BrowserWebDriverContainer<?> chrome = new BrowserWebDriverContainer<>()
-        .withCapabilities(new ChromeOptions())
+    public BrowserWebDriverContainer<?> chrome = new BrowserWebDriverContainer<>("selenium/standalone-chrome:4.1.1")
     // }
         .withNetwork(NETWORK);
 

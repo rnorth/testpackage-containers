@@ -7,7 +7,7 @@ import org.testcontainers.containers.BrowserWebDriverContainer;
 public class ContainerWithoutCapabilitiesTest extends BaseWebDriverContainerTest{
 
     @Rule
-    public BrowserWebDriverContainer<?> chrome = new BrowserWebDriverContainer<>()
+    public BrowserWebDriverContainer<?> chrome = new BrowserWebDriverContainer<>("selenium/standalone-chrome:4.1.1")
         .withNetwork(NETWORK);
 
     @Test

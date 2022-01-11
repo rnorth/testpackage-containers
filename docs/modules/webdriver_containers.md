@@ -5,14 +5,12 @@ from SeleniumHQ's [docker-selenium](https://github.com/SeleniumHQ/docker-seleniu
 
 ## Benefits
 
-* Fully compatible with Selenium 2/Webdriver tests, by providing a `RemoteWebDriver` instance
+* Fully compatible with Selenium 3 & 4 tests, by providing a `RemoteWebDriver` instance
 * No need to have specific web browsers, or even a desktop environment, installed on test servers. The only dependency
   is a working Docker installation and your Java JUnit test suite.
 * Browsers are always launched from a fixed, clean image. This means no configuration drift from user changes or
   automatic browser upgrades.
-* Compatibility between browser version and the Selenium API is assured: a compatible version of the browser docker
-  images will be automatically selected to match the version of `selenium-api-*.jar` on the classpath
-* Additionally the use of a clean browser prevents leakage of cookies, cached data or other state between tests.
+* Additionally, the use of a clean browser prevents leakage of cookies, cached data or other state between tests.
 * **VNC screen recording**: Testcontainers can automatically record video of test runs (optionally capturing just
   failing tests)
 
@@ -80,10 +78,6 @@ If you would like to customise the file name of the recording, or provide a diff
 
 Note the factory must implement `org.testcontainers.containers.RecordingFileFactory`.
 
-## More examples
-
-A few different examples are shown in [ChromeWebDriverContainerTest.java](https://github.com/testcontainers/testcontainers-java/blob/master/modules/selenium/src/test/java/org/testcontainers/junit/ChromeWebDriverContainerTest.java).
-
 ## Adding this module to your project dependencies
 
 Add the following dependency to your `pom.xml`/`build.gradle` file:
@@ -102,18 +96,17 @@ testImplementation "org.testcontainers:selenium:{{latest_version}}"
 ```
 
 !!! hint
-    Adding this Testcontainers library JAR will not automatically add a Selenium Webdriver JAR to your project. You should ensure that your project also has suitable Selenium dependencies in place, for example:
+    Adding this Testcontainers library JAR will not automatically add a Selenium Webdriver JAR to your project. 
+    You should ensure that your project also has suitable Selenium dependencies in place, for example:
 
     ```groovy tab='Gradle'
-    compile "org.seleniumhq.selenium:selenium-remote-driver:3.141.59"
+    implementation 'org.seleniumhq.selenium:selenium-java:4.1.1'
     ```
     
     ```xml tab='Maven'
     <dependency>
         <groupId>org.seleniumhq.selenium</groupId>
-        <artifactId>selenium-remote-driver</artifactId>
-        <version>3.141.59</version>
+        <artifactId>selenium-java</artifactId>
+        <version>4.1.1</version>
     </dependency>
     ```
-    
-    Testcontainers will try and match the version of the Dockerized browser to whichever version of Selenium is found on the classpath

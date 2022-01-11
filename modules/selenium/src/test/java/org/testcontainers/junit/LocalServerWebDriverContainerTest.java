@@ -20,7 +20,7 @@ import static org.rnorth.visibleassertions.VisibleAssertions.assertEquals;
 public class LocalServerWebDriverContainerTest {
 
     @Rule
-    public BrowserWebDriverContainer chrome = new BrowserWebDriverContainer().withCapabilities(new ChromeOptions());
+    public BrowserWebDriverContainer<?> chrome = new BrowserWebDriverContainer<>("selenium/standalone-chrome:4.1.1");
     private int localPort;
 
     /**
@@ -50,7 +50,7 @@ public class LocalServerWebDriverContainerTest {
     @Test
     public void testConnection() {
         // getWebDriver {
-        RemoteWebDriver driver = chrome.getWebDriver();
+        RemoteWebDriver driver = new RemoteWebDriver(chrome.getSeleniumAddress(), new ChromeOptions());
         // }
 
         // Construct a URL that the browser container can access

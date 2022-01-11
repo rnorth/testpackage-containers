@@ -3,11 +3,9 @@ description = "Testcontainers :: Selenium"
 dependencies {
     api project(':testcontainers')
 
-    provided 'org.seleniumhq.selenium:selenium-remote-driver:3.141.59'
-    provided 'org.seleniumhq.selenium:selenium-chrome-driver:3.141.59'
-    testImplementation 'org.seleniumhq.selenium:selenium-firefox-driver:3.141.59'
-    testImplementation 'org.seleniumhq.selenium:selenium-support:3.141.59'
+    implementation 'org.seleniumhq.selenium:selenium-chrome-driver:4.1.0'
 
+    testImplementation 'org.seleniumhq.selenium:selenium-firefox-driver:4.1.0'
     testImplementation 'org.mortbay.jetty:jetty:6.1.26'
     testImplementation project(':nginx')
     testImplementation 'org.rnorth.visible-assertions:visible-assertions:2.1.2'

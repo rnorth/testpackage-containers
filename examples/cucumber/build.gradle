@@ -7,9 +7,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.seleniumhq.selenium:selenium-remote-driver:3.141.59'
-    implementation 'org.seleniumhq.selenium:selenium-firefox-driver:3.141.59'
-    implementation 'org.seleniumhq.selenium:selenium-chrome-driver:3.141.59'
+    testImplementation 'org.seleniumhq.selenium:selenium-java:4.1.1'
     testImplementation 'io.cucumber:cucumber-java:7.1.0'
     testImplementation 'io.cucumber:cucumber-junit:7.1.0'
     testImplementation 'org.testcontainers:selenium'

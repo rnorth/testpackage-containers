@@ -50,8 +50,7 @@ public class ChromeRecordingWebDriverContainerTest extends BaseWebDriverContaine
             try (
                 // recordAll {
                 // To do this, simply add extra parameters to the rule constructor, so video will default to FLV format:
-                BrowserWebDriverContainer<?> chrome = new BrowserWebDriverContainer<>()
-                    .withCapabilities(new ChromeOptions())
+                BrowserWebDriverContainer<?> chrome = new BrowserWebDriverContainer<>("selenium/standalone-chrome:4.1.1")
                     .withRecordingMode(RECORD_ALL, target)
                     // }
                     .withRecordingFileFactory(new DefaultRecordingFileFactory())
@@ -88,8 +87,7 @@ public class ChromeRecordingWebDriverContainerTest extends BaseWebDriverContaine
             try (
                 // recordFlv {
                 // Set (explicitly) FLV format for recorded video:
-                BrowserWebDriverContainer<?> chrome = new BrowserWebDriverContainer<>()
-                    .withCapabilities(new ChromeOptions())
+                BrowserWebDriverContainer<?> chrome = new BrowserWebDriverContainer<>("selenium/standalone-chrome:4.1.1")
                     .withRecordingMode(RECORD_ALL, target, VncRecordingFormat.FLV)
                     // }
                     .withRecordingFileFactory(new DefaultRecordingFileFactory())
@@ -106,8 +104,7 @@ public class ChromeRecordingWebDriverContainerTest extends BaseWebDriverContaine
             try (
                 // recordMp4 {
                 // Set MP4 format for recorded video:
-                BrowserWebDriverContainer<?> chrome = new BrowserWebDriverContainer<>()
-                    .withCapabilities(new ChromeOptions())
+                BrowserWebDriverContainer<?> chrome = new BrowserWebDriverContainer<>("selenium/standalone-chrome:4.1.1")
                     .withRecordingMode(RECORD_ALL, target, VncRecordingFormat.MP4)
                     // }
                     .withRecordingFileFactory(new DefaultRecordingFileFactory())
@@ -122,8 +119,7 @@ public class ChromeRecordingWebDriverContainerTest extends BaseWebDriverContaine
         public void recordingTestThatShouldHaveCorrectDuration() throws IOException, InterruptedException {
             MountableFile mountableFile;
             try (
-                BrowserWebDriverContainer<?> chrome = new BrowserWebDriverContainer<>()
-                    .withCapabilities(new ChromeOptions())
+                BrowserWebDriverContainer<?> chrome = new BrowserWebDriverContainer<>("selenium/standalone-chrome:4.1.1")
                     .withRecordingMode(RECORD_ALL, vncRecordingDirectory.getRoot())
                     .withRecordingFileFactory(new DefaultRecordingFileFactory())
                     .withNetwork(NETWORK)
@@ -158,9 +154,8 @@ public class ChromeRecordingWebDriverContainerTest extends BaseWebDriverContaine
         public void recordingTestThatShouldBeRecordedButNotPersisted() {
             try (
                 // withRecordingFileFactory {
-                BrowserWebDriverContainer<?> chrome = new BrowserWebDriverContainer<>()
+                BrowserWebDriverContainer<?> chrome = new BrowserWebDriverContainer<>("selenium/standalone-chrome:4.1.1")
                     // }
-                    .withCapabilities(new ChromeOptions())
                     // withRecordingFileFactory {
                     .withRecordingFileFactory(new CustomRecordingFileFactory())
                     // }
@@ -178,8 +173,7 @@ public class ChromeRecordingWebDriverContainerTest extends BaseWebDriverContaine
             try (
                 // recordFailing {
                 // or if you only want videos for test failures:
-                BrowserWebDriverContainer<?> chrome = new BrowserWebDriverContainer<>()
-                    .withCapabilities(new ChromeOptions())
+                BrowserWebDriverContainer<?> chrome = new BrowserWebDriverContainer<>("selenium/standalone-chrome:4.1.1")
                     .withRecordingMode(RECORD_FAILING, target)
                     // }
                     .withRecordingFileFactory(new DefaultRecordingFileFactory())

@@ -7,6 +7,6 @@ dependencies {
     testImplementation project(":mysql")
 
     testImplementation 'mysql:mysql-connector-java:8.0.21'
-    testImplementation "org.seleniumhq.selenium:selenium-api:3.141.59"
+    testImplementation 'org.seleniumhq.selenium:selenium-java:4.1.1'
     testImplementation 'org.assertj:assertj-core:3.15.0'
 }

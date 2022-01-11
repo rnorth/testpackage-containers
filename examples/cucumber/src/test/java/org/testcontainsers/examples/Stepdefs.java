@@ -6,6 +6,7 @@ import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -21,7 +22,7 @@ import static org.testcontainers.containers.BrowserWebDriverContainer.VncRecordi
 
 public class Stepdefs {
 
-    private BrowserWebDriverContainer container = new BrowserWebDriverContainer()
+    private final BrowserWebDriverContainer<?> container = new BrowserWebDriverContainer<>("selenium/standalone-chrome:4")
             .withCapabilities(new ChromeOptions())
             .withRecordingMode(RECORD_ALL, new File("build"));
 
@@ -49,20 +50,20 @@ public class Stepdefs {
     }
 
     @Given("^location is \"([^\"]*)\"$")
-    public void locationIs(String location) throws Exception {
+    public void locationIs(String location) {
         this.location = location;
     }
 
     @When("^I ask is it possible to search here$")
-    public void iAskIsItPossibleToSearchHere() throws Exception {
-        RemoteWebDriver driver = container.getWebDriver();
+    public void iAskIsItPossibleToSearchHere() {
+        RemoteWebDriver driver = new RemoteWebDriver(container.getSeleniumAddress(), new ChromeOptions());
         driver.get(location);
-        List<WebElement> searchInputs = driver.findElementsByTagName("input");
+        List<WebElement> searchInputs = driver.findElements(By.tagName("input"));
         answer = searchInputs != null && searchInputs.size() > 0 ? "YES" : "NOPE";
     }
 
     @Then("^I should be told \"([^\"]*)\"$")
-    public void iShouldBeTold(String expected) throws Exception {
+    public void iShouldBeTold(String expected) {
         assertEquals(expected, answer);
     }
 
