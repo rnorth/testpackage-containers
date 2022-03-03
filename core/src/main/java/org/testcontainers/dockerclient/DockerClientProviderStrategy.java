@@ -251,25 +251,24 @@ public abstract class DockerClientProviderStrategy {
     }
 
     public static DockerClient getClientForConfig(TransportConfig transportConfig) {
-        final DockerHttpClient dockerHttpClient;
-
         String transportType = TestcontainersConfiguration.getInstance().getTransportType();
-        switch (transportType) {
-            case "okhttp":
-                dockerHttpClient = new OkDockerHttpClient.Builder()
+        var dockerHttpClient = switch (transportType) {
+            case "okhttp" -> {
+                yield new OkDockerHttpClient.Builder()
                     .dockerHost(transportConfig.getDockerHost())
                     .sslConfig(transportConfig.getSslConfig())
                     .build();
-                break;
-            case "httpclient5":
-                dockerHttpClient = new ZerodepDockerHttpClient.Builder()
+            }
+            case "httpclient5" -> {
+                yield new ZerodepDockerHttpClient.Builder()
                     .dockerHost(transportConfig.getDockerHost())
                     .sslConfig(transportConfig.getSslConfig())
                     .build();
-                break;
-            default:
+            }
+            default -> {
                 throw new IllegalArgumentException("Unknown transport type '" + transportType + "'");
-        }
+            }
+        };
 
         DefaultDockerClientConfig.Builder configBuilder = DefaultDockerClientConfig.createDefaultConfigBuilder();
 
@@ -300,15 +299,11 @@ public abstract class DockerClientProviderStrategy {
             return hostOverride;
         }
 
-        switch (dockerHost.getScheme()) {
-            case "http":
-            case "https":
-            case "tcp":
-                return dockerHost.getHost();
-            case "unix":
-            case "npipe":
+        return switch (dockerHost.getScheme()) {
+            case "http", "https","tcp" -> dockerHost.getHost();
+            case "unix", "npipe" -> {
                 if (DockerClientConfigUtils.IN_A_CONTAINER) {
-                    return client.inspectNetworkCmd()
+                    yield client.inspectNetworkCmd()
                         .withNetworkId("bridge")
                         .exec()
                         .getIpam()
@@ -321,9 +316,9 @@ public abstract class DockerClientProviderStrategy {
                             return DockerClientConfigUtils.getDefaultGateway().orElse("localhost");
                         });
                 }
-                return "localhost";
-            default:
-                return null;
-        }
+                yield "localhost";
+            }
+            default -> null;
+        };
     }
 }

@@ -80,12 +80,10 @@ class ParsedDockerComposeFile {
         for (Map.Entry<String, ?> entry : servicesMap.entrySet()) {
             String serviceName = entry.getKey();
             Object serviceDefinition = entry.getValue();
-            if (!(serviceDefinition instanceof Map)) {
+            if (!(serviceDefinition instanceof Map serviceDefinitionMap)) {
                 log.debug("Compose file {} has an unknown format: service '{}' is not Map", composeFileName, serviceName);
                 break;
             }
-
-            final Map serviceDefinitionMap = (Map) serviceDefinition;
 
             validateNoContainerNameSpecified(serviceName, serviceDefinitionMap);
             findServiceImageName(serviceName, serviceDefinitionMap);
@@ -104,8 +102,7 @@ class ParsedDockerComposeFile {
     }
 
     private void findServiceImageName(String serviceName, Map serviceDefinitionMap) {
-        if (serviceDefinitionMap.containsKey("image") && serviceDefinitionMap.get("image") instanceof String) {
-            final String imageName = (String) serviceDefinitionMap.get("image");
+        if (serviceDefinitionMap.get("image") instanceof String imageName) {
             log.debug("Resolved dependency image for Docker Compose in {}: {}", composeFileName, imageName);
             serviceNameToImageNames.put(serviceName, Sets.newHashSet(imageName));
         }
@@ -115,8 +112,7 @@ class ParsedDockerComposeFile {
         final Object buildNode = serviceDefinitionMap.get("build");
         Path dockerfilePath = null;
 
-        if (buildNode instanceof Map) {
-            final Map buildElement = (Map) buildNode;
+        if (buildNode instanceof Map buildElement) {
             final Object dockerfileRelativePath = buildElement.get("dockerfile");
             final Object contextRelativePath = buildElement.get("context");
             if (dockerfileRelativePath instanceof String && contextRelativePath instanceof String) {

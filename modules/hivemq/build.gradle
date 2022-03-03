@@ -31,6 +31,8 @@ test {
 }
 
 compileTestJava {
+    sourceCompatibility = targetCompatibility = 11
+
     javaCompiler = javaToolchains.compilerFor {
         languageVersion = JavaLanguageVersion.of(11)
     }

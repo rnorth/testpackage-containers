@@ -2,6 +2,15 @@ apply plugin: 'com.github.johnrengelman.shadow'
 
 description = "Testcontainers Core"
 
+configure([tasks.compileJava]) {
+     sourceCompatibility = 16 // for the IDE support
+     options.release = 8
+
+     javaCompiler = javaToolchains.compilerFor {
+         languageVersion = JavaLanguageVersion.of(16)
+     }
+ }
+
 sourceSets {
     jarFileTest
 }
@@ -61,6 +70,9 @@ dependencies {
     baseline 'org.testcontainers:testcontainers:1.16.3', {
         exclude group: "*", module: "*"
     }
+    
+    annotationProcessor 'com.github.bsideup.jabel:jabel-javac-plugin:0.4.2'
+    compileOnly 'com.github.bsideup.jabel:jabel-javac-plugin:0.4.2'
 
     api 'junit:junit:4.13.2'
     api 'org.slf4j:slf4j-api:1.7.35'

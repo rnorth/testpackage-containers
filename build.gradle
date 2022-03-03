@@ -39,6 +39,16 @@ subprojects {
         api.extendsFrom(provided)
     }
 
+    compileTestJava {
+        sourceCompatibility = targetCompatibility = 8
+    }
+
+    tasks.withType(Test).all {
+        javaLauncher = javaToolchains.launcherFor {
+            languageVersion = JavaLanguageVersion.of(8)
+        }
+    }
+
     lombok {
         version = '1.18.20'
     }

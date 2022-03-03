@@ -1,5 +1,6 @@
 package org.testcontainers.utility;
 
+import com.github.bsideup.jabel.Desugar;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -43,15 +44,10 @@ interface Versioning {
         }
     }
 
-    @EqualsAndHashCode
-    class TagVersioning implements Versioning {
+    @Desugar
+    record TagVersioning(String tag) implements Versioning {
         public static final String TAG_REGEX = "[\\w][\\w.\\-]{0,127}";
         static final TagVersioning LATEST = new TagVersioning("latest");
-        private final String tag;
-
-        TagVersioning(String tag) {
-            this.tag = tag;
-        }
 
         @Override
         public boolean isValid() {
@@ -69,14 +65,9 @@ interface Versioning {
         }
     }
 
-    @EqualsAndHashCode
-    class Sha256Versioning implements Versioning {
+    @Desugar
+    record Sha256Versioning(String hash) implements Versioning {
         public static final String HASH_REGEX = "[0-9a-fA-F]{32,}";
-        private final String hash;
-
-        Sha256Versioning(String hash) {
-            this.hash = hash;
-        }
 
         @Override
         public boolean isValid() {
