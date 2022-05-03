@@ -331,6 +331,7 @@ public class MountableFile implements Transferable {
             tarEntry.setMode(getUnixFileMode(itemPath));
             tarArchive.putArchiveEntry(tarEntry);
 
+            log.trace("Transferring {} '{}'", sourceFile.isFile() ? "file" : "directory", sourceFile);
             if (sourceFile.isFile()) {
                 Files.copy(sourceFile.toPath(), tarArchive);
             }
@@ -407,7 +408,7 @@ public class MountableFile implements Transferable {
             // Truncate mode bits for z/OS
             if ("OS/390".equals(SystemUtils.OS_NAME) ||
                 "z/OS".equals(SystemUtils.OS_NAME) ||
-                "zOS".equals(SystemUtils.OS_NAME) ) {
+                "zOS".equals(SystemUtils.OS_NAME)) {
                 unixMode &= TarConstants.MAXID;
                 unixMode |= Files.isDirectory(path) ? 040000 : 0100000;
             }
