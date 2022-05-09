@@ -71,7 +71,7 @@ import static org.testcontainers.containers.BindMode.READ_WRITE;
  */
 @Slf4j
 public class DockerComposeContainer<SELF extends DockerComposeContainer<SELF>> extends FailureDetectingExternalResource implements Startable {
-
+    private static final String DEFAULT_DOCKER_COMPOSE_VERSION = "1.29.2";
     /**
      * Random identifier which will become part of spawned containers names, so we can shut them down
      */
@@ -81,6 +81,7 @@ public class DockerComposeContainer<SELF extends DockerComposeContainer<SELF>> e
     private final Map<String, Integer> scalingPreferences = new HashMap<>();
     private DockerClient dockerClient;
     private boolean localCompose;
+    private String dockerComposeVersion = DEFAULT_DOCKER_COMPOSE_VERSION;
     private boolean pull = true;
     private boolean build = false;
     private Set<String> options = new HashSet<>();
@@ -197,6 +198,11 @@ public class DockerComposeContainer<SELF extends DockerComposeContainer<SELF>> e
             });
     }
 
+    public SELF withDockerComposeVersion(String version) {
+        this.dockerComposeVersion = version;
+        return self();
+    }
+
     public SELF withServices(@NonNull String... services) {
         this.services = Arrays.asList(services);
         return self();
@@ -302,7 +308,7 @@ public class DockerComposeContainer<SELF extends DockerComposeContainer<SELF>> e
         if (localCompose) {
             dockerCompose = new LocalDockerCompose(composeFiles, project);
         } else {
-            dockerCompose = new ContainerisedDockerCompose(composeFiles, project);
+            dockerCompose = new ContainerisedDockerCompose(composeFiles, project, dockerComposeVersion);
         }
 
         dockerCompose
@@ -610,11 +616,11 @@ interface DockerCompose {
 class ContainerisedDockerCompose extends GenericContainer<ContainerisedDockerCompose> implements DockerCompose {
 
     public static final char UNIX_PATH_SEPERATOR = ':';
-    public static final DockerImageName DEFAULT_IMAGE_NAME = DockerImageName.parse("docker/compose:1.29.2");
+    public static final String DEFAULT_IMAGE_NAME = "docker/compose";
 
-    public ContainerisedDockerCompose(List<File> composeFiles, String identifier) {
+    public ContainerisedDockerCompose(List<File> composeFiles, String identifier, String dockerComposeVersion) {
 
-        super(DEFAULT_IMAGE_NAME);
+        super(DockerImageName.parse(DEFAULT_IMAGE_NAME + ":" + dockerComposeVersion));
         addEnv(ENV_PROJECT_NAME, identifier);
 
         // Map the docker compose file into the container
