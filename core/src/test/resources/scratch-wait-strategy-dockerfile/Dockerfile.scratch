@@ -1,0 +1,9 @@
+FROM golang:alpine as app-builder
+WORKDIR /go/src/app
+COPY hello-world.go .
+COPY go.mod .
+RUN CGO_ENABLED=0 go install -ldflags '-extldflags "-static"'
+
+FROM scratch
+COPY --from=app-builder /go/bin/hello-world /hello-world
+ENTRYPOINT ["/hello-world"]

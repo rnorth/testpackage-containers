@@ -24,12 +24,14 @@ import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.utility.DockerLoggerFactory;
 import org.testcontainers.utility.ImageNameSubstitutor;
 import org.testcontainers.utility.LazyFuture;
+import org.testcontainers.utility.MountableFile;
 import org.testcontainers.utility.ResourceReaper;
 
 import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -246,6 +248,16 @@ public class ImageFromDockerfile
      */
     public ImageFromDockerfile withDockerfile(Path dockerfile) {
         this.dockerfile = Optional.of(dockerfile);
+        return this;
+    }
+
+    /**
+     * Sets the Dockerfile to be used for this image based on file from classpath.
+     *
+     * @param classpathResource
+     */
+    public ImageFromDockerfile withDockerfileFromClasspath(String classpathResource) {
+        withDockerfile(Paths.get(MountableFile.forClasspathResource(classpathResource).getResolvedPath()));
         return this;
     }
 }
