@@ -2,6 +2,7 @@ package org.testcontainers.containers.wait.internal;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.testcontainers.containers.Container.ExecResult;
 import org.testcontainers.containers.ExecInContainerPattern;
 import org.testcontainers.containers.wait.strategy.WaitStrategyTarget;
@@ -56,6 +57,9 @@ public class InternalCommandPortListeningCheck implements java.util.concurrent.C
             int exitCode = result.getExitCode();
             if (exitCode != 0 && exitCode != 1) {
                 log.warn("An exception while executing the internal check: {}", result);
+                if (StringUtils.contains(result.getStdout(), "exec: \"/bin/sh\": stat /bin/sh: no such file or directory: unknown")) {
+                    log.warn("Unable to find '/bin/sh'. Does your Dockerfile extends scratch base Dockerfile?");
+                }
             }
             return exitCode == 0;
         } catch (Exception e) {
