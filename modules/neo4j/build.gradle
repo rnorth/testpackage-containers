@@ -33,6 +33,6 @@ dependencies {
 
     api project(":testcontainers")
 
-    testImplementation 'org.neo4j.driver:neo4j-java-driver:4.4.16'
+    testImplementation 'org.neo4j.driver:neo4j-java-driver:4.4.17'
     testImplementation 'org.assertj:assertj-core:3.25.3'
 }
