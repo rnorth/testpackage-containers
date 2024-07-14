@@ -4,6 +4,6 @@ dependencies {
     api project(':jdbc')
 
     testImplementation project(':jdbc-test')
-    testRuntimeOnly 'io.prestosql:presto-jdbc:350'
+    testRuntimeOnly 'com.facebook.presto:presto-jdbc:0.290'
     compileOnly 'org.jetbrains:annotations:24.1.0'
 }

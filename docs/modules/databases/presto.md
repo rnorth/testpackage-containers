@@ -1,8 +1,5 @@
 # Presto Module
 
-!!! note
-    This module is deprecated, use Trino module.
-
 See [Database containers](./index.md) for documentation and usage that is common to all database container types.
 
 ## Usage example
@@ -84,6 +81,6 @@ Add the following dependency to your `pom.xml`/`build.gradle` file:
 !!! hint
     Adding this Testcontainers library JAR will not automatically add the Presto JDBC driver JAR to your project.
     You should ensure that your project has the Presto JDBC driver as a dependency, if you plan on using it.
-    Refer to [Presto project download page](https://prestosql.io/download.html) for instructions.
+    Refer to [Presto project download page](https://prestodb.io/getting-started/) for instructions.
 
 
