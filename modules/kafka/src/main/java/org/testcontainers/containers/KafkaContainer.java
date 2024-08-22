@@ -232,6 +232,7 @@ public class KafkaContainer extends GenericContainer<KafkaContainer> {
      *      <li>{@code container.getHost():container.getMappedPort(9093)}</li>
      *      <li>{@code container.getConfig().getHostName():9092}</li>
      * </ul>
+     *
      * @param listenerSupplier a supplier that will provide a listener
      * @return this {@link KafkaContainer} instance
      */
@@ -275,10 +276,10 @@ public class KafkaContainer extends GenericContainer<KafkaContainer> {
 
         private void resolveListeners() {
             Set<String> listeners = Arrays
-                .stream(this.envVars.get("KAFKA_LISTENERS").split(","))
+                .stream(this.envVars.get("KAFKA_LISTENERS").get().split(","))
                 .collect(Collectors.toSet());
             Set<String> listenerSecurityProtocolMap = Arrays
-                .stream(this.envVars.get("KAFKA_LISTENER_SECURITY_PROTOCOL_MAP").split(","))
+                .stream(this.envVars.get("KAFKA_LISTENER_SECURITY_PROTOCOL_MAP").get().split(","))
                 .collect(Collectors.toSet());
 
             List<Supplier<String>> listenersToTransform = new ArrayList<>(this.listeners);
@@ -299,8 +300,8 @@ public class KafkaContainer extends GenericContainer<KafkaContainer> {
             String kafkaListeners = String.join(",", listeners);
             String kafkaListenerSecurityProtocolMap = String.join(",", listenerSecurityProtocolMap);
 
-            this.envVars.put("KAFKA_LISTENERS", kafkaListeners);
-            this.envVars.put("KAFKA_LISTENER_SECURITY_PROTOCOL_MAP", kafkaListenerSecurityProtocolMap);
+            this.envVars.put("KAFKA_LISTENERS", () -> kafkaListeners);
+            this.envVars.put("KAFKA_LISTENER_SECURITY_PROTOCOL_MAP", () -> kafkaListenerSecurityProtocolMap);
         }
 
         void withListener(Supplier<String> listenerSupplier) {
@@ -321,7 +322,7 @@ public class KafkaContainer extends GenericContainer<KafkaContainer> {
         }
 
         void withRaft() {
-            this.envVars.computeIfAbsent("CLUSTER_ID", key -> clusterId);
+            this.envVars.computeIfAbsent("CLUSTER_ID", key -> () -> clusterId);
             this.envVars.computeIfAbsent("KAFKA_NODE_ID", key -> getEnvVars().get("KAFKA_BROKER_ID"));
             addEnvVar("KAFKA_LISTENER_SECURITY_PROTOCOL_MAP", kafkaListenerSecurityProtocolMap());
             addEnvVar("KAFKA_LISTENERS", kafkaListeners());
@@ -334,14 +335,18 @@ public class KafkaContainer extends GenericContainer<KafkaContainer> {
                 getEnvVars().get("KAFKA_NODE_ID"),
                 networkAlias
             );
-            this.envVars.computeIfAbsent("KAFKA_CONTROLLER_QUORUM_VOTERS", key -> controllerQuorumVoters);
+            this.envVars.computeIfAbsent("KAFKA_CONTROLLER_QUORUM_VOTERS", key -> () -> controllerQuorumVoters);
             addEnvVar("KAFKA_CONTROLLER_LISTENER_NAMES", "CONTROLLER");
 
             setWaitStrategy(Wait.forLogMessage(".*Transitioning from RECOVERY to RUNNING.*", 1));
         }
 
         private String kafkaListenerSecurityProtocolMap() {
-            String kafkaListenerSecurityProtocolMapEnvVar = getEnvVars().get("KAFKA_LISTENER_SECURITY_PROTOCOL_MAP");
+            Supplier<String> kafkaListenerSecurityProtocolMapEnvVarSupplier = getEnvVars()
+                .get("KAFKA_LISTENER_SECURITY_PROTOCOL_MAP");
+            String kafkaListenerSecurityProtocolMapEnvVar = kafkaListenerSecurityProtocolMapEnvVarSupplier == null
+                ? null
+                : kafkaListenerSecurityProtocolMapEnvVarSupplier.get();
             String kafkaListenerSecurityProtocolMap = String.format(
                 "%s,CONTROLLER:PLAINTEXT",
                 kafkaListenerSecurityProtocolMapEnvVar
@@ -353,7 +358,10 @@ public class KafkaContainer extends GenericContainer<KafkaContainer> {
         }
 
         private String kafkaListeners() {
-            String kafkaListenersEnvVar = getEnvVars().get("KAFKA_LISTENERS");
+            Supplier<String> kafkaListenersEnvVarSupplier = getEnvVars().get("KAFKA_LISTENERS");
+            String kafkaListenersEnvVar = kafkaListenersEnvVarSupplier == null
+                ? null
+                : kafkaListenersEnvVarSupplier.get();
             String kafkaListeners = String.format("%s,CONTROLLER://0.0.0.0:9094", kafkaListenersEnvVar);
             Set<String> listeners = new HashSet<>(Arrays.asList(kafkaListeners.split(",")));
             return String.join(",", listeners);

@@ -103,7 +103,7 @@ public class PulsarContainer extends GenericContainer<PulsarContainer> {
 
         withCommand("/bin/bash", "-c", standaloneBaseCommand);
 
-        final String clusterName = getEnvMap().getOrDefault("PULSAR_PREFIX_clusterName", "standalone");
+        final String clusterName = getEnvMap().getOrDefault("PULSAR_PREFIX_clusterName", () -> "standalone").get();
         final String response = String.format("[\"%s\"]", clusterName);
         waitAllStrategy.withStrategy(
             Wait.forHttp(ADMIN_CLUSTERS_ENDPOINT).forPort(BROKER_HTTP_PORT).forResponsePredicate(response::equals)

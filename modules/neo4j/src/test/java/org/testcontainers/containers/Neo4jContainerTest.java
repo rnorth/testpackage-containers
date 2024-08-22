@@ -176,8 +176,8 @@ public class Neo4jContainerTest {
         // }
 
         assertThat(neo4jContainer.getEnvMap())
-            .containsEntry("NEO4J_dbms_security_procedures_unrestricted", "apoc.*,algo.*");
-        assertThat(neo4jContainer.getEnvMap()).containsEntry("NEO4J_dbms_tx__log_rotation_size", "42M");
+            .containsEntry("NEO4J_dbms_security_procedures_unrestricted", () -> "apoc.*,algo.*");
+        assertThat(neo4jContainer.getEnvMap()).containsEntry("NEO4J_dbms_tx__log_rotation_size", () -> "42M");
     }
 
     @Test
@@ -186,7 +186,7 @@ public class Neo4jContainerTest {
 
         neo4jContainer.configure();
 
-        assertThat(neo4jContainer.getEnvMap()).containsEntry("NEO4J_AUTH", "neo4j/secret");
+        assertThat(neo4jContainer.getEnvMap()).containsEntry("NEO4J_AUTH", () -> "neo4j/secret");
     }
 
     @Test
@@ -197,7 +197,7 @@ public class Neo4jContainerTest {
 
         neo4jContainer.configure();
 
-        assertThat(neo4jContainer.getEnvMap()).containsEntry("NEO4J_AUTH", "neo4j/verySecret");
+        assertThat(neo4jContainer.getEnvMap()).containsEntry("NEO4J_AUTH", () -> "neo4j/verySecret");
     }
 
     @Test
@@ -208,7 +208,7 @@ public class Neo4jContainerTest {
 
         neo4jContainer.configure();
 
-        assertThat(neo4jContainer.getEnvMap()).containsEntry("NEO4J_AUTH", "neo4j/anotherSecret");
+        assertThat(neo4jContainer.getEnvMap()).containsEntry("NEO4J_AUTH", () -> "neo4j/anotherSecret");
     }
 
     @Test
@@ -219,7 +219,7 @@ public class Neo4jContainerTest {
 
         neo4jContainer.configure();
 
-        assertThat(neo4jContainer.getEnvMap()).containsEntry("NEO4J_AUTH", "none");
+        assertThat(neo4jContainer.getEnvMap()).containsEntry("NEO4J_AUTH", () -> "none");
     }
 
     @Test
@@ -276,7 +276,7 @@ public class Neo4jContainerTest {
             // needs to get called explicitly for setup
             neo4jContainer.configure();
 
-            assertThat(neo4jContainer.getEnvMap()).containsEntry("NEO4JLABS_PLUGINS", "[\"apoc\"]");
+            assertThat(neo4jContainer.getEnvMap()).containsEntry("NEO4JLABS_PLUGINS", () -> "[\"apoc\"]");
         }
     }
 
@@ -290,7 +290,7 @@ public class Neo4jContainerTest {
             // needs to get called explicitly for setup
             neo4jContainer.configure();
 
-            assertThat(neo4jContainer.getEnvMap().get("NEO4JLABS_PLUGINS"))
+            assertThat(neo4jContainer.getEnvMap().get("NEO4JLABS_PLUGINS").get())
                 .containsAnyOf("[\"apoc\",\"bloom\"]", "[\"bloom\",\"apoc\"]");
         }
     }
@@ -302,7 +302,7 @@ public class Neo4jContainerTest {
             // needs to get called explicitly for setup
             neo4jContainer.configure();
 
-            assertThat(neo4jContainer.getEnvMap()).containsEntry("NEO4JLABS_PLUGINS", "[\"apoc\"]");
+            assertThat(neo4jContainer.getEnvMap()).containsEntry("NEO4JLABS_PLUGINS", () -> "[\"apoc\"]");
         }
     }
 
@@ -313,7 +313,7 @@ public class Neo4jContainerTest {
             // needs to get called explicitly for setup
             neo4jContainer.configure();
 
-            assertThat(neo4jContainer.getEnvMap().get("NEO4JLABS_PLUGINS"))
+            assertThat(neo4jContainer.getEnvMap().get("NEO4JLABS_PLUGINS").get())
                 .containsAnyOf("[\"apoc\",\"bloom\"]", "[\"bloom\",\"apoc\"]");
         }
     }
@@ -324,7 +324,7 @@ public class Neo4jContainerTest {
             // needs to get called explicitly for setup
             neo4jContainer.configure();
 
-            assertThat(neo4jContainer.getEnvMap()).containsEntry("NEO4JLABS_PLUGINS", "[\"apoc\"]");
+            assertThat(neo4jContainer.getEnvMap()).containsEntry("NEO4JLABS_PLUGINS", () -> "[\"apoc\"]");
         }
     }
 
@@ -339,7 +339,7 @@ public class Neo4jContainerTest {
             // needs to get called explicitly for setup
             neo4jContainer.configure();
 
-            assertThat(neo4jContainer.getEnvMap().get("NEO4JLABS_PLUGINS"))
+            assertThat(neo4jContainer.getEnvMap().get("NEO4JLABS_PLUGINS").get())
                 .containsAnyOf("[\"apoc\",\"bloom\"]", "[\"bloom\",\"apoc\"]");
         }
     }

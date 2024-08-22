@@ -20,6 +20,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -216,7 +217,10 @@ public class LocalStackContainer extends GenericContainer<LocalStackContainer> {
      */
     private String configureLambdaContainerLabels() {
         String lambdaDockerFlags = internalMarkerLabels();
-        String existingLambdaDockerFlags = getEnvMap().get("LAMBDA_DOCKER_FLAGS");
+        Supplier<String> existingLambdaDockerFlagsSupplier = getEnvMap().get("LAMBDA_DOCKER_FLAGS");
+        String existingLambdaDockerFlags = existingLambdaDockerFlagsSupplier != null
+            ? existingLambdaDockerFlagsSupplier.get()
+            : null;
         if (existingLambdaDockerFlags != null) {
             lambdaDockerFlags = existingLambdaDockerFlags + " " + lambdaDockerFlags;
         }
@@ -292,14 +296,14 @@ public class LocalStackContainer extends GenericContainer<LocalStackContainer> {
      * Provides an endpoint override that is preconfigured to communicate with a given simulated service.
      * The provided endpoint override should be set in the AWS Java SDK v2 when building a client, e.g.:
      * <pre><code>S3Client s3 = S3Client
-             .builder()
-             .endpointOverride(localstack.getEndpointOverride(LocalStackContainer.Service.S3))
-             .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(
-             localstack.getAccessKey(), localstack.getSecretKey()
-             )))
-             .region(Region.of(localstack.getRegion()))
-             .build()
-             </code></pre>
+     .builder()
+     .endpointOverride(localstack.getEndpointOverride(LocalStackContainer.Service.S3))
+     .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(
+     localstack.getAccessKey(), localstack.getSecretKey()
+     )))
+     .region(Region.of(localstack.getRegion()))
+     .build()
+     </code></pre>
      * <p><strong>Please note that this method is only intended to be used for configuring AWS SDK clients
      * that are running on the test host. If other containers need to call this one, they should be configured
      * specifically to do so using a Docker network and appropriate addressing.</strong></p>
@@ -323,14 +327,14 @@ public class LocalStackContainer extends GenericContainer<LocalStackContainer> {
      * Provides an endpoint to communicate with LocalStack service.
      * The provided endpoint should be set in the AWS Java SDK v2 when building a client, e.g.:
      * <pre><code>S3Client s3 = S3Client
-             .builder()
-             .endpointOverride(localstack.getEndpoint())
-             .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(
-             localstack.getAccessKey(), localstack.getSecretKey()
-             )))
-             .region(Region.of(localstack.getRegion()))
-             .build()
-             </code></pre>
+     .builder()
+     .endpointOverride(localstack.getEndpoint())
+     .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(
+     localstack.getAccessKey(), localstack.getSecretKey()
+     )))
+     .region(Region.of(localstack.getRegion()))
+     .build()
+     </code></pre>
      * <p><strong>Please note that this method is only intended to be used for configuring AWS SDK clients
      * that are running on the test host. If other containers need to call this one, they should be configured
      * specifically to do so using a Docker network and appropriate addressing.</strong></p>
@@ -357,18 +361,18 @@ public class LocalStackContainer extends GenericContainer<LocalStackContainer> {
      * <a href="https://github.com/localstack/localstack/blob/master/doc/interaction/README.md?plain=1#L32">AWS Access Key</a>
      * The access key can be used to construct AWS SDK v2 clients:
      * <pre><code>S3Client s3 = S3Client
-             .builder()
-             .endpointOverride(localstack.getEndpointOverride(LocalStackContainer.Service.S3))
-             .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(
-             localstack.getAccessKey(), localstack.getSecretKey()
-             )))
-             .region(Region.of(localstack.getRegion()))
-             .build()
+     .builder()
+     .endpointOverride(localstack.getEndpointOverride(LocalStackContainer.Service.S3))
+     .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(
+     localstack.getAccessKey(), localstack.getSecretKey()
+     )))
+     .region(Region.of(localstack.getRegion()))
+     .build()
      </code></pre>
      * @return a default access key
      */
     public String getAccessKey() {
-        return this.getEnvMap().getOrDefault("AWS_ACCESS_KEY_ID", DEFAULT_AWS_ACCESS_KEY_ID);
+        return this.getEnvMap().getOrDefault("AWS_ACCESS_KEY_ID", () -> DEFAULT_AWS_ACCESS_KEY_ID).get();
     }
 
     /**
@@ -376,36 +380,36 @@ public class LocalStackContainer extends GenericContainer<LocalStackContainer> {
      * <a href="https://github.com/localstack/localstack/blob/master/doc/interaction/README.md?plain=1#L32">AWS Secret Key</a>
      * The secret key can be used to construct AWS SDK v2 clients:
      * <pre><code>S3Client s3 = S3Client
-             .builder()
-             .endpointOverride(localstack.getEndpointOverride(LocalStackContainer.Service.S3))
-             .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(
-             localstack.getAccessKey(), localstack.getSecretKey()
-             )))
-             .region(Region.of(localstack.getRegion()))
-             .build()
+     .builder()
+     .endpointOverride(localstack.getEndpointOverride(LocalStackContainer.Service.S3))
+     .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(
+     localstack.getAccessKey(), localstack.getSecretKey()
+     )))
+     .region(Region.of(localstack.getRegion()))
+     .build()
      </code></pre>
      * @return a default secret key
      */
     public String getSecretKey() {
-        return this.getEnvMap().getOrDefault("AWS_SECRET_ACCESS_KEY", DEFAULT_AWS_SECRET_ACCESS_KEY);
+        return this.getEnvMap().getOrDefault("AWS_SECRET_ACCESS_KEY", () -> DEFAULT_AWS_SECRET_ACCESS_KEY).get();
     }
 
     /**
      * Provides a default region that is preconfigured to communicate with a given simulated service.
      * The region can be used to construct AWS SDK v2 clients:
      * <pre><code>S3Client s3 = S3Client
-             .builder()
-             .endpointOverride(localstack.getEndpointOverride(LocalStackContainer.Service.S3))
-             .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(
-             localstack.getAccessKey(), localstack.getSecretKey()
-             )))
-             .region(Region.of(localstack.getRegion()))
-             .build()
+     .builder()
+     .endpointOverride(localstack.getEndpointOverride(LocalStackContainer.Service.S3))
+     .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(
+     localstack.getAccessKey(), localstack.getSecretKey()
+     )))
+     .region(Region.of(localstack.getRegion()))
+     .build()
      </code></pre>
      * @return a default region
      */
     public String getRegion() {
-        return this.getEnvMap().getOrDefault("DEFAULT_REGION", DEFAULT_REGION);
+        return this.getEnvMap().getOrDefault("DEFAULT_REGION", () -> DEFAULT_REGION).get();
     }
 
     public interface EnabledService {

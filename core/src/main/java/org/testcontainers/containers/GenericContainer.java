@@ -96,6 +96,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.Adler32;
@@ -953,7 +954,7 @@ public class GenericContainer<SELF extends GenericContainer<SELF>>
     }
 
     @Override
-    public Map<String, String> getEnvMap() {
+    public Map<String, Supplier<String>> getEnvMap() {
         return this.containerDef.envVars;
     }
 
@@ -965,14 +966,14 @@ public class GenericContainer<SELF extends GenericContainer<SELF>>
         return this.containerDef.getEnvVars()
             .entrySet()
             .stream()
-            .map(it -> it.getKey() + "=" + it.getValue())
+            .map(it -> it.getKey() + "=" + it.getValue().get())
             .collect(Collectors.toList());
     }
 
     @Override
     public void setEnv(List<String> env) {
         this.containerDef.setEnvVars(
-                env.stream().map(it -> it.split("=")).collect(Collectors.toMap(it -> it[0], it -> it[1]))
+                env.stream().map(it -> it.split("=")).collect(Collectors.toMap(it -> it[0], it -> () -> it[1]))
             );
     }
 
@@ -1147,12 +1148,17 @@ public class GenericContainer<SELF extends GenericContainer<SELF>>
         this.containerDef.addPortBindings(portBinding);
     }
 
+    public SELF withEnv(String key, Supplier<String> value) {
+        getEnvMap().put(key, value);
+        return self();
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
     public SELF withEnv(String key, String value) {
-        this.addEnv(key, value);
+        getEnvMap().put(key, () -> value);
         return self();
     }
 

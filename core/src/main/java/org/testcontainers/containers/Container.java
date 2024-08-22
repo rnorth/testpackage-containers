@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.concurrent.Future;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public interface Container<SELF extends Container<SELF>> extends LinkableContainer, ContainerState {
     /**
@@ -212,7 +213,7 @@ public interface Container<SELF extends Container<SELF>> extends LinkableContain
      * @return this
      */
     default SELF withEnv(String key, Function<Optional<String>, String> mapper) {
-        Optional<String> oldValue = Optional.ofNullable(getEnvMap().get(key));
+        Optional<String> oldValue = Optional.ofNullable(getEnvMap().get(key).get());
         return withEnv(key, mapper.apply(oldValue));
     }
 
@@ -447,7 +448,7 @@ public interface Container<SELF extends Container<SELF>> extends LinkableContain
     @Deprecated
     List<String> getEnv();
 
-    Map<String, String> getEnvMap();
+    Map<String, Supplier<String>> getEnvMap();
 
     String[] getCommandParts();
 

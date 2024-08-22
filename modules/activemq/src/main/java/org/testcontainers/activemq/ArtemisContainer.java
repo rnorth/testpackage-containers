@@ -76,10 +76,10 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> {
     }
 
     public String getUser() {
-        return getEnvMap().get("ARTEMIS_USER");
+        return getEnvMap().get("ARTEMIS_USER").get();
     }
 
     public String getPassword() {
-        return getEnvMap().get("ARTEMIS_PASSWORD");
+        return getEnvMap().get("ARTEMIS_PASSWORD").get();
     }
 }
