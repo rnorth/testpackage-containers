@@ -4,7 +4,7 @@ dependencies {
     api project(':testcontainers')
 
     testImplementation 'org.assertj:assertj-core:3.26.3'
-    testImplementation "org.apache.activemq:activemq-client:6.1.2"
+    testImplementation "org.apache.activemq:activemq-client:6.1.3"
     testImplementation "org.apache.activemq:artemis-jakarta-client:2.35.0"
 }
 
