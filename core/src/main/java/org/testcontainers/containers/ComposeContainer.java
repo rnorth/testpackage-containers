@@ -13,6 +13,7 @@ import org.testcontainers.containers.wait.strategy.WaitStrategy;
 import org.testcontainers.lifecycle.Startable;
 import org.testcontainers.utility.Base58;
 import org.testcontainers.utility.DockerImageName;
+import org.testcontainers.utility.TestcontainersConfiguration;
 
 import java.io.File;
 import java.time.Duration;
@@ -61,7 +62,7 @@ public class ComposeContainer extends FailureDetectingExternalResource implement
 
     public static final String COMPOSE_EXECUTABLE = SystemUtils.IS_OS_WINDOWS ? "docker.exe" : "docker";
 
-    private static final DockerImageName DEFAULT_IMAGE_NAME = DockerImageName.parse("docker:24.0.2");
+    public static final String DEFAULT_DOCKER_IMAGE = "docker:24.0.2";
 
     private final ComposeDelegate composeDelegate;
 
@@ -88,7 +89,7 @@ public class ComposeContainer extends FailureDetectingExternalResource implement
                 composeFiles,
                 identifier,
                 COMPOSE_EXECUTABLE,
-                DEFAULT_IMAGE_NAME
+                DockerImageName.parse(TestcontainersConfiguration.getInstance().getEnvVarOrUserProperty("compose.container.image",DEFAULT_DOCKER_IMAGE))
             );
         this.project = this.composeDelegate.getProject();
     }
