@@ -12,15 +12,17 @@ import org.testcontainers.utility.TestcontainersConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 public class ComposeContainerTest {
+
     private TestLogAppender testLogAppender;
+
     private Logger rootLogger;
 
     @Before
@@ -44,9 +46,9 @@ public class ComposeContainerTest {
         System.clearProperty("compose.container.image");
         List<String> logs = testLogAppender.getLogs();
         composeContainer.stop();
-        assertNotNull(logs);
+        assertThat(logs).isNotNull();
         Optional<String> verification = logs.stream().filter(line -> line.contains("Creating container for image: docker:25.0.2")).findFirst();
-        assertTrue(verification.isPresent());
+        assertThat(verification.isPresent()).isTrue();
         TestcontainersConfiguration.getInstance().updateUserConfig("compose.container.image", "");
     }
 
