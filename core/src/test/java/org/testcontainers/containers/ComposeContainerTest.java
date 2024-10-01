@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class ComposeContainerTest {
 
+    public static final String DOCKER_IMAGE = "docker:25.0.2";
     private TestLogAppender testLogAppender;
 
     private Logger rootLogger;
@@ -30,30 +31,31 @@ public class ComposeContainerTest {
         testLogAppender.start();
         rootLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         rootLogger.addAppender(testLogAppender);
+        TestcontainersConfiguration.getInstance().updateUserConfig("compose.container.image", DOCKER_IMAGE);
     }
 
     @After
     public void tearDown() {
         rootLogger.detachAppender(testLogAppender);
+        TestcontainersConfiguration.getInstance().updateUserConfig("compose.container.image", "");
+        System.clearProperty("compose.container.image");
     }
 
     @Test
     public void testWithCustomDockerImage() throws IOException {
-        TestcontainersConfiguration.getInstance().updateUserConfig("compose.container.image", "docker:25.0.2");
         ComposeContainer composeContainer = new ComposeContainer(
             Lists.newArrayList(new File("src/test/resources/docker-compose-imagename-parsing-v2.yml"))
         );
         composeContainer.start();
-        System.clearProperty("compose.container.image");
+
         List<String> logs = testLogAppender.getLogs();
         composeContainer.stop();
         assertThat(logs).isNotNull();
         Optional<String> verification = logs
             .stream()
-            .filter(line -> line.contains("Creating container for image: docker:25.0.2"))
+            .filter(line -> line.contains("Creating container for image: "+DOCKER_IMAGE))
             .findFirst();
         assertThat(verification.isPresent()).isTrue();
-        TestcontainersConfiguration.getInstance().updateUserConfig("compose.container.image", "");
     }
 
     private static class TestLogAppender extends AppenderBase<ILoggingEvent> {
@@ -67,10 +69,6 @@ public class ComposeContainerTest {
 
         public List<String> getLogs() {
             return logs;
-        }
-
-        public void clearLogs() {
-            logs.clear();
         }
     }
 }
