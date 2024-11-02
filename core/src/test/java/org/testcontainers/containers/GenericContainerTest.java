@@ -29,6 +29,7 @@ import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.utility.MountableFile;
 
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -37,6 +38,12 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.rnorth.visibleassertions.VisibleAssertions.assertEquals;
+import static org.rnorth.visibleassertions.VisibleAssertions.assertNotNull;
+import static org.rnorth.visibleassertions.VisibleAssertions.assertThrows;
+import static org.rnorth.visibleassertions.VisibleAssertions.assertTrue;
+import static org.testcontainers.TestImages.TINY_IMAGE;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.assertj.core.api.Assumptions.assumeThat;
 
@@ -226,6 +233,46 @@ public class GenericContainerTest {
         }
     }
 
+    @Test
+    public void shouldHonorUDPPorts() {
+        ImageFromDockerfile image = new ImageFromDockerfile("publish-multiple")
+        .withDockerfileFromBuilder(builder ->
+            builder
+                .from("testcontainers/helloworld:1.1.0")
+                .expose(8080, 8081)
+                .build()
+        );
+
+        try (
+            GenericContainer container = new GenericContainer<>(image)
+                .withExposedPorts(8080, 8081)
+                .withCreateContainerCmdModifier(cmd -> {
+                    //Add previously exposed ports and UDP port
+                    List<ExposedPort> exposedPorts = new ArrayList<>();
+                    for (ExposedPort p : cmd.getExposedPorts()) {
+                        exposedPorts.add(p);
+                    }
+                    exposedPorts.add(ExposedPort.udp(99));
+                    cmd.withExposedPorts(exposedPorts);
+
+                    //Add previous port bindings and UDP port binding
+                    Ports ports = cmd.getPortBindings();
+                    ports.bind(ExposedPort.udp(99), Ports.Binding.empty());
+                    cmd.withPortBindings(ports);
+                }
+            )
+        ) {
+
+            container.start();
+            ExposedPort expectedPort = ExposedPort.udp(99);
+            Map<ExposedPort, Ports.Binding[]> map = container.getContainerInfo().getNetworkSettings().getPorts().getBindings();
+
+            assertEquals("Two TCP ports should have been exposed.", 2, container.getExposedPorts().size());
+            assertNotNull("withExposedPorts should have exposed UDP port", map.get(expectedPort));
+            assertTrue("UDP port 99 should have been mapped to a different port", 99 != Integer.valueOf(map.get(expectedPort)[0].getHostPortSpec()));
+        }
+    }
+    
     @Test
     public void shouldReturnTheProvidedImage() {
         GenericContainer container = new GenericContainer(TestImages.REDIS_IMAGE);
