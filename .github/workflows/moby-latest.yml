@@ -23,11 +23,19 @@ jobs:
 
       - name: Install Stable Docker
         if: ${{ matrix.install-docker-type == 'STABLE' }}
-        run: curl https://get.docker.com
+        run: |
+          sudo systemctl stop docker.service
+          sudo apt-get purge docker-ce docker-ce-cli containerd.io docker-compose-plugin docker-ce-rootless-extras docker-buildx-plugin
+          curl -fsSL https://test.docker.com -o get-docker.sh
+          sudo REPO_FILE=docker-ce-staging.repo DOWNLOAD_URL=https://download-stage.docker.com sh ./get-docker.sh
 
       - name: Install Docker from the TEST channel
         if: ${{ matrix.install-docker-type == 'ROOTFUL' }}
-        run: curl https://get.docker.com | CHANNEL=test sh
+        run: |
+          sudo systemctl stop docker.service
+          sudo apt-get purge docker-ce docker-ce-cli containerd.io docker-compose-plugin docker-ce-rootless-extras docker-buildx-plugin
+          curl -fsSL https://test.docker.com -o get-docker.sh
+          sudo REPO_FILE=docker-ce-staging.repo DOWNLOAD_URL=https://download-stage.docker.com sh ./get-docker.sh
 
       - name: Setup rootless Docker
         if: ${{ matrix.install-docker-type == 'ROOTLESS' }}
