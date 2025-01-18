@@ -62,7 +62,7 @@ public class ComposeContainer extends FailureDetectingExternalResource implement
 
     public static final String COMPOSE_EXECUTABLE = SystemUtils.IS_OS_WINDOWS ? "docker.exe" : "docker";
 
-    public static final String DEFAULT_DOCKER_IMAGE = "docker:24.0.2";
+    public static final String DEFAULT_DOCKER_IMAGE = "docker:27.5.0";
 
     private final ComposeDelegate composeDelegate;
 
@@ -70,32 +70,70 @@ public class ComposeContainer extends FailureDetectingExternalResource implement
 
     private List<String> filesInDirectory = new ArrayList<>();
 
-    public ComposeContainer(File... composeFiles) {
-        this(Arrays.asList(composeFiles));
+    public ComposeContainer(DockerImageName image, File... composeFiles) {
+        this(image, Arrays.asList(composeFiles));
     }
 
-    public ComposeContainer(List<File> composeFiles) {
-        this(Base58.randomString(6).toLowerCase(), composeFiles);
+    public ComposeContainer(DockerImageName image, List<File> composeFiles) {
+        this(image,Base58.randomString(6).toLowerCase(),composeFiles);
     }
 
-    public ComposeContainer(String identifier, File... composeFiles) {
-        this(identifier, Arrays.asList(composeFiles));
+    public ComposeContainer(DockerImageName image, String identifier, File... composeFiles) {
+        this(image,identifier, Arrays.asList(composeFiles));
     }
 
-    public ComposeContainer(String identifier, List<File> composeFiles) {
+    public ComposeContainer(DockerImageName image, String identifier, List<File> composeFiles) {
         this.composeDelegate =
             new ComposeDelegate(
                 ComposeDelegate.ComposeVersion.V2,
                 composeFiles,
                 identifier,
                 COMPOSE_EXECUTABLE,
-                DockerImageName.parse(
-                    TestcontainersConfiguration
-                        .getInstance()
-                        .getEnvVarOrUserProperty("compose.container.image", DEFAULT_DOCKER_IMAGE)
-                )
+                image
             );
         this.project = this.composeDelegate.getProject();
+    }
+
+    /**
+     * @deprecated
+     *  Use the new constructor ComposeContainer(DockerImageName image, File... composeFiles)
+     */
+    @Deprecated
+    public ComposeContainer(File... composeFiles) {
+        this(getDockerImageName(),Arrays.asList(composeFiles));
+    }
+    /**
+     * @deprecated
+     *  Use the new constructor ComposeContainer(DockerImageName image,List<File> composeFiles)
+     */
+    @Deprecated
+    public ComposeContainer(List<File> composeFiles) {
+        this(getDockerImageName(), composeFiles);
+    }
+    /**
+     * @deprecated
+     *  Use the new constructor ComposeContainer(DockerImageName image, String identifier, File... composeFile)
+     */
+    @Deprecated
+    public ComposeContainer(String identifier, File... composeFiles) {
+        this(getDockerImageName(),identifier, Arrays.asList(composeFiles));
+    }
+
+    /**
+     * @deprecated
+     * Use the new constructor ComposeContainer(DockerImageName image,String identifier, List<File> composeFiles)
+     */
+    @Deprecated
+    public ComposeContainer(String identifier, List<File> composeFiles) {
+       this(getDockerImageName(),identifier, composeFiles);
+    }
+
+    public static DockerImageName getDockerImageName() {
+        return DockerImageName.parse(
+            TestcontainersConfiguration
+                .getInstance()
+                .getEnvVarOrUserProperty("compose.container.image", DEFAULT_DOCKER_IMAGE)
+        );
     }
 
     @Override
