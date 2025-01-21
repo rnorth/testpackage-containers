@@ -88,7 +88,7 @@ public class DockerComposeContainer<SELF extends DockerComposeContainer<SELF>>
     public DockerComposeContainer(DockerImageName image, String identifier, List<File> composeFiles) {
         this.composeDelegate =
             new ComposeDelegate(
-                ComposeDelegate.ComposeVersion.V2,
+                ComposeDelegate.ComposeVersion.V1,
                 composeFiles,
                 identifier,
                 COMPOSE_EXECUTABLE,
@@ -126,7 +126,7 @@ public class DockerComposeContainer<SELF extends DockerComposeContainer<SELF>>
                 composeFiles,
                 identifier,
                 COMPOSE_EXECUTABLE,
-                getDockerImageName()
+                DockerImageName.parse("docker/compose:1.29.2")
             );
         this.project = this.composeDelegate.getProject();
     }
