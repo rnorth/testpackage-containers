@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ComposeContainerTest {
 
     public static final String DOCKER_IMAGE = "docker:25.0.2";
+
     private TestLogAppender testLogAppender;
 
     private Logger rootLogger;
@@ -53,7 +54,7 @@ public class ComposeContainerTest {
         assertThat(logs).isNotNull();
         Optional<String> verification = logs
             .stream()
-            .filter(line -> line.contains("Creating container for image: "+DOCKER_IMAGE))
+            .filter(line -> line.contains("Creating container for image: " + DOCKER_IMAGE))
             .findFirst();
         assertThat(verification.isPresent()).isTrue();
     }

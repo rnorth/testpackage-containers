@@ -13,7 +13,6 @@ import org.testcontainers.containers.wait.strategy.WaitStrategy;
 import org.testcontainers.lifecycle.Startable;
 import org.testcontainers.utility.Base58;
 import org.testcontainers.utility.DockerImageName;
-import org.testcontainers.utility.TestcontainersConfiguration;
 
 import java.io.File;
 import java.time.Duration;
@@ -27,8 +26,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
-
-import static org.testcontainers.containers.ComposeContainer.getDockerImageName;
 
 /**
  * Container which launches Docker Compose, for the purposes of launching a defined set of containers.
@@ -72,31 +69,23 @@ public class DockerComposeContainer<SELF extends DockerComposeContainer<SELF>>
 
     private List<String> filesInDirectory = new ArrayList<>();
 
-
-
     public DockerComposeContainer(DockerImageName image, String identifier, File composeFile) {
         this(image, identifier, Collections.singletonList(composeFile));
     }
 
     public DockerComposeContainer(DockerImageName image, List<File> composeFiles) {
-        this(image,Base58.randomString(6).toLowerCase(),composeFiles);
+        this(image, Base58.randomString(6).toLowerCase(), composeFiles);
     }
 
     public DockerComposeContainer(DockerImageName image, String identifier, File... composeFiles) {
-        this(image,identifier, Arrays.asList(composeFiles));
-    }
-    public DockerComposeContainer(DockerImageName image, String identifier, List<File> composeFiles) {
-        this.composeDelegate =
-            new ComposeDelegate(
-                ComposeDelegate.ComposeVersion.V1,
-                composeFiles,
-                identifier,
-                COMPOSE_EXECUTABLE,
-                image
-            );
-        this.project = this.composeDelegate.getProject();
+        this(image, identifier, Arrays.asList(composeFiles));
     }
 
+    public DockerComposeContainer(DockerImageName image, String identifier, List<File> composeFiles) {
+        this.composeDelegate =
+            new ComposeDelegate(ComposeDelegate.ComposeVersion.V1, composeFiles, identifier, COMPOSE_EXECUTABLE, image);
+        this.project = this.composeDelegate.getProject();
+    }
 
     @Deprecated
     public DockerComposeContainer(File composeFile, String identifier) {
@@ -130,8 +119,6 @@ public class DockerComposeContainer<SELF extends DockerComposeContainer<SELF>>
             );
         this.project = this.composeDelegate.getProject();
     }
-
-
 
     @Override
     @Deprecated
