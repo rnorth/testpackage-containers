@@ -99,7 +99,7 @@ public class ComposeContainer extends FailureDetectingExternalResource implement
 
     /**
      * @deprecated
-     *  Use the new constructor ComposeContainer(DockerImageName image,List<File> composeFiles)
+     *  Use the new constructor ComposeContainer(DockerImageName image,List composeFiles)
      */
     @Deprecated
     public ComposeContainer(List<File> composeFiles) {
@@ -117,7 +117,7 @@ public class ComposeContainer extends FailureDetectingExternalResource implement
 
     /**
      * @deprecated
-     * Use the new constructor ComposeContainer(DockerImageName image,String identifier, List<File> composeFiles)
+     * Use the new constructor ComposeContainer(DockerImageName image,String identifier, List composeFiles)
      */
     @Deprecated
     public ComposeContainer(String identifier, List<File> composeFiles) {
