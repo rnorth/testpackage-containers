@@ -22,7 +22,7 @@ See below for an example runner configuration:
 ```
 
 Please also include the following in your GitlabCI pipeline definitions (`.gitlab-ci.yml`) that use Testcontainers:
-```yml
+```yaml
 variables:
   TESTCONTAINERS_HOST_OVERRIDE: "<ip-docker-host>"
 ```
@@ -38,7 +38,7 @@ Caveat: Current docker releases (verified for 20.10.9) intentionally delay the s
 
 Here is a sample `.gitlab-ci.yml` that executes test with gradle:
 
-```yml
+```yaml
 # DinD service is required for Testcontainers
 services:
   - name: docker:dind
@@ -57,4 +57,125 @@ test:
  image: gradle:5.0
  stage: test
  script: ./gradlew test
+```
+
+## Example using Kubedock
+
+This applies if your executor is `kubernetes` and you don't want to use DinD. One option is to use [kubedock](https://github.com/joyrex2001/kubedock). This library is a minimal implementation of the Docker API that will orchestrate containers on a Kubernetes cluster.
+
+Here is the example Kubernetes configuration you must create:
+
+```yaml
+# ServiceAccount for Kubedock
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kubedock
+  namespace: gitlab-runner
+
+# Role for Kubedock
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: kubedock-role
+  namespace: gitlab-runner
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["create", "get", "list", "delete", "watch"]
+  - apiGroups: [""]
+    resources: ["pods/log"]
+    verbs: ["list", "get"]
+  - apiGroups: [""]
+    resources: ["pods/exec"]
+    verbs: ["create"]
+  - apiGroups: [""]
+    resources: ["services"]
+    verbs: ["create", "get", "list", "delete"]
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["create", "get", "list", "delete"]
+
+# RoleBinding for Kubedock
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: kubedock-rolebinding
+  namespace: gitlab-runner
+subjects:
+  - kind: User
+    name: system:serviceaccount:gitlab-runner:kubedock
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: kubedock-role
+  apiGroup: rbac.authorization.k8s.io
+
+# Deployment for Kubedock Server
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubedock-server
+  namespace: gitlab-runner
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kubedock-server
+  template:
+    metadata:
+      labels:
+        app: kubedock-server
+    spec:
+      serviceAccountName: kubedock
+      containers:
+        - name: kubedock-server
+          image: joyrex2001/kubedock:0.17.0
+          resources:
+            limits:
+              memory: "4Gi"
+              cpu: "1000m"
+            requests:
+              memory: "2Gi"
+              cpu: "200m"
+          ports:
+            - containerPort: 2475
+          args: [
+              # Configuration options described here:
+              # https://github.com/joyrex2001/kubedock/blob/master/config.md
+              "server",
+              "--namespace=gitlab-runner",
+              "--service-account=kubedock",
+              "--timeout=20m0s",
+              "--request-cpu=1",
+              "--request-memory=2Gi",
+              "--disable-dind",
+              "--reverse-proxy",
+              "--reapmax=60m",
+            ]
+
+# Service for Kubedock
+apiVersion: v1
+kind: Service
+metadata:
+  name: kubedock-service
+  namespace: gitlab-runner
+spec:
+  selector:
+    app: kubedock-server
+  type: ClusterIP
+  clusterIP: None
+```
+
+
+Here is a sample `.gitlab-ci.yml` that executes go test:
+
+```yaml
+variables:
+  # Instruct Testcontainers to use the daemon of kubedock to create containers in kubernetes
+  DOCKER_HOST: "tcp://kubedock-service:2475"
+test:
+  image: golang:1.22
+  stage: test
+  script: go test ./... -v
 ```
