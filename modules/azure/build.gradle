@@ -7,7 +7,7 @@ dependencies {
     shaded 'com.squareup.okhttp3:okhttp:4.12.0'
 
     testImplementation 'org.assertj:assertj-core:3.26.3'
-    testImplementation 'com.azure:azure-cosmos:4.63.3'
+    testImplementation 'com.azure:azure-cosmos:4.66.0'
     testImplementation 'com.azure:azure-storage-blob:12.29.0'
     testImplementation 'com.azure:azure-storage-queue:12.24.0'
     testImplementation 'com.azure:azure-data-tables:12.5.0'
