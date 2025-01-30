@@ -8,7 +8,7 @@ dependencies {
 
     api 'com.googlecode.junit-toolbox:junit-toolbox:2.4'
 
-    api 'org.assertj:assertj-core:3.26.3'
+    api 'org.assertj:assertj-core:3.27.3'
 
     api 'org.apache.tomcat:tomcat-jdbc:10.0.27'
     api 'org.vibur:vibur-dbcp:25.0'
