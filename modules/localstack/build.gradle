@@ -10,5 +10,5 @@ dependencies {
     testImplementation 'com.amazonaws:aws-java-sdk-lambda'
     testImplementation 'com.amazonaws:aws-java-sdk-core'
     testImplementation 'software.amazon.awssdk:s3:2.28.6'
-    testImplementation 'org.assertj:assertj-core:3.26.3'
+    testImplementation 'org.assertj:assertj-core:3.27.3'
 }
