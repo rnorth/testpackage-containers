@@ -3,6 +3,6 @@ description = "Testcontainers :: MongoDB"
 dependencies {
     api project(':testcontainers')
 
-    testImplementation("org.mongodb:mongodb-driver-sync:5.1.4")
+    testImplementation("org.mongodb:mongodb-driver-sync:5.3.1")
     testImplementation 'org.assertj:assertj-core:3.26.3'
 }
