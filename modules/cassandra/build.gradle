@@ -11,5 +11,5 @@ dependencies {
     api "com.datastax.cassandra:cassandra-driver-core:3.10.0"
 
     testImplementation 'com.datastax.oss:java-driver-core:4.17.0'
-    testImplementation 'org.assertj:assertj-core:3.26.3'
+    testImplementation 'org.assertj:assertj-core:3.27.3'
 }
