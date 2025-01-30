@@ -4,5 +4,5 @@ dependencies {
     api project(':testcontainers')
 
     testImplementation 'org.mock-server:mockserver-client-java:5.15.0'
-    testImplementation 'org.assertj:assertj-core:3.26.3'
+    testImplementation 'org.assertj:assertj-core:3.27.3'
 }
