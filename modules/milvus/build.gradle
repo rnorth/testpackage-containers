@@ -3,6 +3,6 @@ description = "Testcontainers :: Milvus"
 dependencies {
     api project(':testcontainers')
 
-    testImplementation 'org.assertj:assertj-core:3.26.3'
+    testImplementation 'org.assertj:assertj-core:3.27.3'
     testImplementation 'io.milvus:milvus-sdk-java:2.4.4'
 }
