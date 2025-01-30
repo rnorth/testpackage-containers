@@ -3,6 +3,6 @@ description = "Testcontainers :: Typesense"
 dependencies {
     api project(':testcontainers')
 
-    testImplementation 'org.assertj:assertj-core:3.26.3'
+    testImplementation 'org.assertj:assertj-core:3.27.3'
     testImplementation 'org.typesense:typesense-java:0.9.0'
 }
