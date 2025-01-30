@@ -120,13 +120,13 @@ dependencies {
     // Synthetic JAR used for MountableFileTest and DirectoryTarResourceTest
     testImplementation files('testlib/repo/fakejar/fakejar/0/fakejar-0.jar')
 
-    testImplementation 'org.assertj:assertj-core:3.26.3'
+    testImplementation 'org.assertj:assertj-core:3.27.3'
     testImplementation 'io.rest-assured:rest-assured:5.5.0'
 
     jarFileTestCompileOnly "org.projectlombok:lombok:${lombok.version}"
     jarFileTestAnnotationProcessor "org.projectlombok:lombok:${lombok.version}"
     jarFileTestImplementation 'junit:junit:4.13.2'
-    jarFileTestImplementation 'org.assertj:assertj-core:3.26.3'
+    jarFileTestImplementation 'org.assertj:assertj-core:3.27.3'
     jarFileTestImplementation 'org.ow2.asm:asm-debug-all:5.2'
 }
 
