@@ -4,7 +4,7 @@ dependencies {
     api project(':testcontainers')
 
     testImplementation 'org.assertj:assertj-core:3.26.3'
-    testImplementation 'io.qdrant:client:1.10.0'
+    testImplementation 'io.qdrant:client:1.13.0'
     testImplementation platform('io.grpc:grpc-bom:1.68.0')
     testImplementation 'io.grpc:grpc-stub'
     testImplementation 'io.grpc:grpc-protobuf'
