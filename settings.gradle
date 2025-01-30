@@ -6,7 +6,7 @@ buildscript {
     }
     dependencies {
         classpath "com.gradle.enterprise:com.gradle.enterprise.gradle.plugin:3.18.2"
-        classpath "com.gradle:common-custom-user-data-gradle-plugin:2.0.2"
+        classpath "com.gradle:common-custom-user-data-gradle-plugin:2.1"
         classpath "org.gradle.toolchains:foojay-resolver:0.8.0"
     }
 }
