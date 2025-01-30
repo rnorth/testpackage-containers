@@ -5,7 +5,7 @@ dependencies {
 
     compileOnly 'org.jetbrains:annotations:24.1.0'
     testImplementation 'commons-dbutils:commons-dbutils:1.8.1'
-    testImplementation 'org.vibur:vibur-dbcp:25.0'
+    testImplementation 'org.vibur:vibur-dbcp:26.0'
     testImplementation 'org.apache.tomcat:tomcat-jdbc:10.1.30'
     testImplementation 'com.zaxxer:HikariCP-java6:2.3.13'
     testImplementation 'org.assertj:assertj-core:3.26.3'
