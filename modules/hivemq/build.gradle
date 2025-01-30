@@ -17,7 +17,7 @@ dependencies {
     testImplementation("com.hivemq:hivemq-mqtt-client:1.3.3")
     testImplementation("org.apache.httpcomponents:httpclient:4.5.14")
     testImplementation("ch.qos.logback:logback-classic:1.5.8")
-    testImplementation 'org.assertj:assertj-core:3.26.3'
+    testImplementation 'org.assertj:assertj-core:3.27.3'
 }
 
 test {
