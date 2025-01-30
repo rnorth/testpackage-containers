@@ -5,5 +5,5 @@ dependencies {
 
     testImplementation 'com.ecwid.consul:consul-api:1.4.5'
     testImplementation 'io.rest-assured:rest-assured:5.5.0'
-    testImplementation 'org.assertj:assertj-core:3.26.3'
+    testImplementation 'org.assertj:assertj-core:3.27.3'
 }
