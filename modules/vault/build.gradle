@@ -5,6 +5,6 @@ dependencies {
 
     testImplementation 'com.bettercloud:vault-java-driver:5.1.0'
     testImplementation 'io.rest-assured:rest-assured:5.5.0'
-    testImplementation 'org.assertj:assertj-core:3.26.3'
+    testImplementation 'org.assertj:assertj-core:3.27.3'
 
 }
