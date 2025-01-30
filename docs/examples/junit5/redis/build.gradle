@@ -8,7 +8,7 @@ dependencies {
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.11.0"
     testImplementation project(":testcontainers")
     testImplementation project(":junit-jupiter")
-    testImplementation 'org.assertj:assertj-core:3.26.3'
+    testImplementation 'org.assertj:assertj-core:3.27.3'
 }
 
 test {
