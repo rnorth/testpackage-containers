@@ -7,7 +7,7 @@ dependencies {
     compileOnly 'io.r2dbc:r2dbc-postgresql:0.8.13.RELEASE'
 
     testImplementation project(':jdbc-test')
-    testRuntimeOnly 'org.postgresql:postgresql:42.7.4'
+    testRuntimeOnly 'org.postgresql:postgresql:42.7.5'
 
     testImplementation testFixtures(project(':r2dbc'))
     testRuntimeOnly 'io.r2dbc:r2dbc-postgresql:0.8.13.RELEASE'
