@@ -12,7 +12,7 @@ public class ClickHouseContainerTest extends AbstractContainerDatabaseTest {
 
     @Test
     public void testSimple() throws SQLException {
-        try (ClickHouseContainer clickhouse = new ClickHouseContainer("clickhouse/clickhouse-server:21.9.2-alpine")) {
+        try (ClickHouseContainer clickhouse = new ClickHouseContainer("clickhouse/clickhouse-server:24.8.12.28")) {
             clickhouse.start();
 
             ResultSet resultSet = performQuery(clickhouse, "SELECT 1");
@@ -25,7 +25,7 @@ public class ClickHouseContainerTest extends AbstractContainerDatabaseTest {
     @Test
     public void customCredentialsWithUrlParams() throws SQLException {
         try (
-            ClickHouseContainer clickhouse = new ClickHouseContainer("clickhouse/clickhouse-server:21.9.2-alpine")
+            ClickHouseContainer clickhouse = new ClickHouseContainer("clickhouse/clickhouse-server:24.8.12.28")
                 .withUsername("test")
                 .withPassword("test")
                 .withDatabaseName("test")

@@ -21,9 +21,9 @@ import java.util.Set;
  */
 public class ClickHouseContainer extends JdbcDatabaseContainer<ClickHouseContainer> {
 
-    private static final String NAME = "clickhouse";
+    public static final String NAME = "clickhouse";
 
-    static final String CLICKHOUSE_CLICKHOUSE_SERVER = "clickhouse/clickhouse-server";
+    public static final String CLICKHOUSE_CLICKHOUSE_SERVER = "clickhouse/clickhouse-server";
 
     private static final DockerImageName CLICKHOUSE_IMAGE_NAME = DockerImageName.parse(CLICKHOUSE_CLICKHOUSE_SERVER);
 
