@@ -4,5 +4,5 @@ dependencies {
     api project(':testcontainers')
 
     testImplementation 'org.assertj:assertj-core:3.26.3'
-    testImplementation 'io.pinecone:pinecone-client:3.1.0'
+    testImplementation 'io.pinecone:pinecone-client:4.0.0'
 }
