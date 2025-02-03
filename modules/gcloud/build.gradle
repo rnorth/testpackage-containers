@@ -3,7 +3,7 @@ description = "Testcontainers :: GCloud"
 dependencies {
     api project(':testcontainers')
 
-    testImplementation platform("com.google.cloud:libraries-bom:26.43.0")
+    testImplementation platform("com.google.cloud:libraries-bom:26.54.0")
     testImplementation 'com.google.cloud:google-cloud-bigquery'
     testImplementation 'com.google.cloud:google-cloud-datastore'
     testImplementation 'com.google.cloud:google-cloud-firestore'
