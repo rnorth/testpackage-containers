@@ -47,11 +47,20 @@ public class DockerComposeContainerScalingTest {
     }
 
     @Test
-    public void simpleTest() {
-        for (int i = 0; i < 3; i++) {
-            clients[i].incr("somekey");
+    public void incrAndGet_somekey_in_client_0() {
+        clients[0].incr("somekey");
+        assertThat(clients[0].get("somekey")).as("Client 0: Each redis instance is separate").isEqualTo("1");
+    }
 
-            assertThat(clients[i].get("somekey")).as("Each redis instance is separate").isEqualTo("1");
-        }
+    @Test
+    public void incrAndGet_somekey_in_client_1() {
+        clients[1].incr("somekey");
+        assertThat(clients[1].get("somekey")).as("Client 1: Each redis instance is separate").isEqualTo("1");
+    }
+
+    @Test
+    public void incrAndGet_somekey_in_client_2() {
+        clients[2].incr("somekey");
+        assertThat(clients[2].get("somekey")).as("Client 2: Each redis instance is separate").isEqualTo("1");
     }
 }
