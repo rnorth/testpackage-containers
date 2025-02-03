@@ -3,6 +3,6 @@ description = "Testcontainers :: ActiveMQ"
 dependencies {
     api project(':testcontainers')
 
-    testImplementation 'org.assertj:assertj-core:3.26.3'
+    testImplementation 'org.assertj:assertj-core:3.27.3'
     testImplementation 'io.pinecone:pinecone-client:3.1.0'
 }
