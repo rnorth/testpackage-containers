@@ -62,7 +62,7 @@ public class ComposeContainer extends FailureDetectingExternalResource implement
 
     public static final String COMPOSE_EXECUTABLE = SystemUtils.IS_OS_WINDOWS ? "docker.exe" : "docker";
 
-    private static final String DEFAULT_DOCKER_IMAGE = "docker:27.5.0";
+    private static final DockerImageName DEFAULT_IMAGE_NAME = DockerImageName.parse("docker:24.0.2");
 
     private final ComposeDelegate composeDelegate;
 
@@ -94,7 +94,7 @@ public class ComposeContainer extends FailureDetectingExternalResource implement
      */
     @Deprecated
     public ComposeContainer(File... composeFiles) {
-        this(getDockerImageName(), Arrays.asList(composeFiles));
+        this(DEFAULT_IMAGE_NAME, Arrays.asList(composeFiles));
     }
 
     /**
@@ -103,7 +103,7 @@ public class ComposeContainer extends FailureDetectingExternalResource implement
      */
     @Deprecated
     public ComposeContainer(List<File> composeFiles) {
-        this(getDockerImageName(), composeFiles);
+        this(DEFAULT_IMAGE_NAME, composeFiles);
     }
 
     /**
@@ -112,7 +112,7 @@ public class ComposeContainer extends FailureDetectingExternalResource implement
      */
     @Deprecated
     public ComposeContainer(String identifier, File... composeFiles) {
-        this(getDockerImageName(), identifier, Arrays.asList(composeFiles));
+        this(DEFAULT_IMAGE_NAME, identifier, Arrays.asList(composeFiles));
     }
 
     /**
@@ -121,15 +121,7 @@ public class ComposeContainer extends FailureDetectingExternalResource implement
      */
     @Deprecated
     public ComposeContainer(String identifier, List<File> composeFiles) {
-        this(getDockerImageName(), identifier, composeFiles);
-    }
-
-    public static DockerImageName getDockerImageName() {
-        return DockerImageName.parse(
-            TestcontainersConfiguration
-                .getInstance()
-                .getEnvVarOrUserProperty("compose.container.image", DEFAULT_DOCKER_IMAGE)
-        );
+        this(DEFAULT_IMAGE_NAME, identifier, composeFiles);
     }
 
     @Override
