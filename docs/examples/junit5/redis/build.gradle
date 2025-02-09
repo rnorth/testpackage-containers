@@ -1,7 +1,7 @@
 description = "Examples for docs"
 
 dependencies {
-    api "io.lettuce:lettuce-core:6.4.0.RELEASE"
+    api "io.lettuce:lettuce-core:6.5.3.RELEASE"
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.11.0"
     testImplementation "org.junit.jupiter:junit-jupiter-params:5.10.3"
