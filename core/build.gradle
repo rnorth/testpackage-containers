@@ -111,7 +111,7 @@ dependencies {
     }
     testImplementation 'org.apache.httpcomponents:httpclient:4.5.14'
     testImplementation 'redis.clients:jedis:5.1.5'
-    testImplementation 'com.rabbitmq:amqp-client:5.22.0'
+    testImplementation 'com.rabbitmq:amqp-client:5.25.0'
     testImplementation 'org.mongodb:mongo-java-driver:3.12.14'
 
     testImplementation ('org.mockito:mockito-core:4.11.0') {
