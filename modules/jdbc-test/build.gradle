@@ -10,7 +10,7 @@ dependencies {
 
     api 'org.assertj:assertj-core:3.26.3'
 
-    api 'org.apache.tomcat:tomcat-jdbc:10.0.27'
+    api 'org.apache.tomcat:tomcat-jdbc:11.0.3'
     api 'org.vibur:vibur-dbcp:25.0'
     api 'mysql:mysql-connector-java:8.0.33'
 }
