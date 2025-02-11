@@ -25,6 +25,10 @@ import static org.assertj.core.api.Assumptions.assumeThat;
 
 public class ExposedHostTest {
 
+    private static final int FIXED_PORT_80 = 80;
+    
+    private static final int FIXED_PORT_81 = 81;
+
     private static HttpServer server;
 
     @BeforeClass
@@ -82,11 +86,11 @@ public class ExposedHostTest {
 
     @Test
     public void testExposedHostPortOnFixedInternalPorts() {
-        Testcontainers.exposeHostPorts(ImmutableMap.of(server.getAddress().getPort(), 80));
-        Testcontainers.exposeHostPorts(ImmutableMap.of(server.getAddress().getPort(), 81));
-
-        assertResponse(new GenericContainer<>(tinyContainerDef()), 80);
-        assertResponse(new GenericContainer<>(tinyContainerDef()), 81);
+        Testcontainers.exposeHostPorts(ImmutableMap.of(server.getAddress().getPort(), FIXED_PORT_80));
+        Testcontainers.exposeHostPorts(ImmutableMap.of(server.getAddress().getPort(), FIXED_PORT_81));
+    
+        assertResponse(new GenericContainer<>(tinyContainerDef()), FIXED_PORT_80);
+        assertResponse(new GenericContainer<>(tinyContainerDef()), FIXED_PORT_81);
     }
 
     @Test
