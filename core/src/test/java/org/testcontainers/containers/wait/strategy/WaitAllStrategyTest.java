@@ -21,7 +21,13 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 public class WaitAllStrategyTest {
-
+    
+    private static final long CHILD_INITIAL_TIMEOUT = 10;
+    
+    private static final long CHILD_DIRECT_SET_TIMEOUT = 20;
+    
+    private static final long PARENT_OVERRIDE_TIMEOUT = 30;
+    
     @Mock
     private GenericContainer container;
 
@@ -44,14 +50,14 @@ public class WaitAllStrategyTest {
      */
     @Test
     public void parentTimeoutApplies() {
-        DummyStrategy child1 = new DummyStrategy(Duration.ofMillis(10));
-        child1.withStartupTimeout(Duration.ofMillis(20));
+        DummyStrategy child1 = new DummyStrategy(Duration.ofMillis(CHILD_INITIAL_TIMEOUT));
+        child1.withStartupTimeout(Duration.ofMillis(CHILD_DIRECT_SET_TIMEOUT));
 
-        assertThat(child1.startupTimeout.toMillis()).as("withStartupTimeout directly sets the timeout").isEqualTo(20L);
+        assertThat(child1.startupTimeout.toMillis()).as("withStartupTimeout directly sets the timeout").isEqualTo(CHILD_DIRECT_SET_TIMEOUT);
 
-        new WaitAllStrategy().withStrategy(child1).withStartupTimeout(Duration.ofMillis(30));
+        new WaitAllStrategy().withStrategy(child1).withStartupTimeout(Duration.ofMillis(PARENT_OVERRIDE_TIMEOUT));
 
-        assertThat(child1.startupTimeout.toMillis()).as("WaitAllStrategy overrides a child's timeout").isEqualTo(30L);
+        assertThat(child1.startupTimeout.toMillis()).as("WaitAllStrategy overrides a child's timeout").isEqualTo(PARENT_OVERRIDE_TIMEOUT);
     }
 
     @Test
