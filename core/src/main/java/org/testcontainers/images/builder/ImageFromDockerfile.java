@@ -24,12 +24,14 @@ import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.utility.DockerLoggerFactory;
 import org.testcontainers.utility.ImageNameSubstitutor;
 import org.testcontainers.utility.LazyFuture;
+import org.testcontainers.utility.MountableFile;
 import org.testcontainers.utility.ResourceReaper;
 
 import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -256,6 +258,16 @@ public class ImageFromDockerfile
     public ImageFromDockerfile withDockerfilePath(String relativePathFromBuildContextDirectory) {
         this.dockerFilePath = Optional.of(relativePathFromBuildContextDirectory);
         return this;
+    }
+
+    /**
+     * Sets the Dockerfile to be used for this image, from a resource
+     *
+     * @param resourceName resource name for the dockerfile
+     */
+    public ImageFromDockerfile withDockerfileFromClasspath(String resourceName) {
+        final MountableFile mountableFile = MountableFile.forClasspathResource(resourceName);
+        return withDockerfile(Paths.get(mountableFile.getResolvedPath()));
     }
 
     /**

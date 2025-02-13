@@ -31,6 +31,16 @@ public class DockerfileTest {
     }
 
     @Test
+    public void withDockerfileFromClassPathWorks() {
+        ImageFromDockerfile image = new ImageFromDockerfile()
+            .withFileFromString("folder/someFile.txt", "hello")
+            .withFileFromClasspath("test.txt", "mappable-resource/test-resource.txt")
+            .withDockerfileFromClasspath("mappable-dockerfile/Dockerfile");
+
+        verifyImage(image);
+    }
+
+    @Test
     public void customizableImage() {
         ImageFromDockerfile image = new ImageFromDockerfile() {
             @Override
