@@ -11,7 +11,7 @@ dependencies {
     testImplementation 'com.azure:azure-storage-blob:12.29.0'
     testImplementation 'com.azure:azure-storage-queue:12.24.0'
     testImplementation 'com.azure:azure-data-tables:12.5.0'
-    testImplementation 'com.azure:azure-messaging-eventhubs:5.19.2'
+    testImplementation 'com.azure:azure-messaging-eventhubs:5.20.0'
     testImplementation 'com.azure:azure-messaging-servicebus:7.17.8'
     testImplementation 'com.microsoft.sqlserver:mssql-jdbc:12.8.1.jre8'
 }
