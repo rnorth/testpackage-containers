@@ -29,13 +29,13 @@ public class CassandraDatabaseDelegate extends AbstractDatabaseDelegate<Void> {
         return null;
     }
 
-    @Override
     public void execute(
         String statement,
         String scriptPath,
         int lineNumber,
         boolean continueOnError,
-        boolean ignoreFailedDrops
+        boolean ignoreFailedDrops,
+        boolean silentErrorLogs
     ) {
         try {
             // Use cqlsh command directly inside the container to execute statements
@@ -46,6 +46,9 @@ public class CassandraDatabaseDelegate extends AbstractDatabaseDelegate<Void> {
                 CassandraContainer cassandraContainer = (CassandraContainer) this.container;
                 String username = cassandraContainer.getUsername();
                 String password = cassandraContainer.getPassword();
+                if (cassandraContainer.isSslRequired()) {
+                   cqlshCommand = ArrayUtils.add(cqlshCommand, "--ssl");
+                }
                 cqlshCommand = ArrayUtils.addAll(cqlshCommand, "-u", username, "-p", password);
             }
 
@@ -68,12 +71,25 @@ public class CassandraDatabaseDelegate extends AbstractDatabaseDelegate<Void> {
                     log.info("CQL statement {} was applied", statement);
                 }
             } else {
-                log.error("CQL script execution failed with error: \n{}", result.getStderr());
+                if (!silentErrorLogs) {
+                    log.error("CQL script execution failed with error: \n{}", result.getStderr());
+                }
                 throw new ScriptStatementFailedException(statement, lineNumber, scriptPath);
             }
         } catch (IOException | InterruptedException e) {
             throw new ScriptStatementFailedException(statement, lineNumber, scriptPath, e);
         }
+    }
+
+    @Override
+    public void execute(
+        String statement,
+        String scriptPath,
+        int lineNumber,
+        boolean continueOnError,
+        boolean ignoreFailedDrops
+    ) {
+        this.execute(statement, scriptPath, lineNumber, continueOnError, ignoreFailedDrops, false);
     }
 
     @Override

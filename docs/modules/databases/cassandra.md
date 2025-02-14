@@ -20,6 +20,19 @@ This example connects to the Cassandra cluster:
     [Running init script with required authentication](../../../modules/cassandra/src/test/java/org/testcontainers/cassandra/CassandraContainerTest.java) inside_block:init-with-auth
     <!--/codeinclude-->
 
+## Using secure connection (TLS)
+
+If you override the default `cassandra.yaml` with a version setting the property `client_encryption_options.optional` 
+to `false`, you have to provide a valid client certificate and key (PEM format) when you initialize your container:
+
+<!--codeinclude-->
+[SSL setup](../../../modules/cassandra/src/test/java/org/testcontainers/cassandra/CassandraContainerTest.java) inside_block:with-ssl-config
+<!--/codeinclude-->
+
+!!! hint
+    To generate the client certificate and key, please refer to
+    [this documentation](https://docs.datastax.com/en/cassandra-oss/3.x/cassandra/configuration/secureSSLCertificates.html). 
+
 ## Adding this module to your project dependencies
 
 Add the following dependency to your `pom.xml`/`build.gradle` file:

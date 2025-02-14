@@ -1,0 +1,7 @@
+[ssl]
+certfile = ssl/user_cert.pem
+usercert = ssl/user_cert.pem
+userkey = ssl/user_key.pem
+
+[connection]
+factory = cqlshlib.ssl.ssl_transport_factory

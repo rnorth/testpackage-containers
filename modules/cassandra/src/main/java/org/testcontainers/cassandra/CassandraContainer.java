@@ -1,6 +1,7 @@
 package org.testcontainers.cassandra;
 
 import com.github.dockerjava.api.command.InspectContainerResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.testcontainers.cassandra.delegate.CassandraDatabaseDelegate;
 import org.testcontainers.cassandra.wait.CassandraQueryWaitStrategy;
 import org.testcontainers.containers.GenericContainer;
@@ -40,6 +41,10 @@ public class CassandraContainer extends GenericContainer<CassandraContainer> {
 
     private String initScriptPath;
 
+    private String clientCertFile;
+
+    private String clientKeyFile;
+
     public CassandraContainer(String dockerImageName) {
         this(DockerImageName.parse(dockerImageName));
     }
@@ -69,6 +74,15 @@ public class CassandraContainer extends GenericContainer<CassandraContainer> {
             .ofNullable(configLocation)
             .map(MountableFile::forClasspathResource)
             .ifPresent(mountableFile -> withCopyFileToContainer(mountableFile, CONTAINER_CONFIG_LOCATION));
+
+        // If a secure connection is required by Cassandra configuration, copy the user certificate and key to a
+        // dedicated location and define a cqlshrc file with the appropriate SSL configuration.
+        // See: https://docs.datastax.com/en/cassandra-oss/3.x/cassandra/configuration/secureCqlshSSL.html
+        if (isSslRequired()) {
+            withCopyFileToContainer(MountableFile.forClasspathResource(clientCertFile), "ssl/user_cert.pem");
+            withCopyFileToContainer(MountableFile.forClasspathResource(clientKeyFile), "ssl/user_key.pem");
+            withCopyFileToContainer(MountableFile.forClasspathResource("cqlshrc"), "/root/.cassandra/cqlshrc");
+        }
     }
 
     @Override
@@ -110,9 +124,11 @@ public class CassandraContainer extends GenericContainer<CassandraContainer> {
      * Initialize Cassandra with the custom overridden Cassandra configuration
      * <p>
      * Be aware, that Docker effectively replaces all /etc/cassandra content with the content of config location, so if
-     * Cassandra.yaml in configLocation is absent or corrupted, then Cassandra just won't launch
+     * Cassandra.yaml in configLocation is absent or corrupted, then Cassandra just won't launch.
      *
-     * @param configLocation relative classpath with the directory that contains cassandra.yaml and other configuration files
+     * @param configLocation relative classpath with the directory that contains cassandra.yaml and other configuration
+     *                       files
+     * @return The updated {@link CassandraContainer}.
      */
     public CassandraContainer withConfigurationOverride(String configLocation) {
         this.configLocation = configLocation;
@@ -126,6 +142,7 @@ public class CassandraContainer extends GenericContainer<CassandraContainer> {
      * </p>
      *
      * @param initScriptPath relative classpath resource
+     * @return The updated {@link CassandraContainer}.
      */
     public CassandraContainer withInitScript(String initScriptPath) {
         this.initScriptPath = initScriptPath;
@@ -133,8 +150,30 @@ public class CassandraContainer extends GenericContainer<CassandraContainer> {
     }
 
     /**
-     * Get username
+     * Configure secured connection (TLS) when required by the Cassandra configuration
+     * (i.e. cassandra.yaml file contains the property {@code client_encryption_options.optional} with value
+     * {@code false}).
      *
+     * @param clientCertFile The client certificate required to execute CQL scripts.
+     * @param clientKeyFile  The client key required to execute CQL scripts.
+     * @return The updated {@link CassandraContainer}.
+     */
+    public CassandraContainer withSsl(String clientCertFile, String clientKeyFile) {
+        this.clientCertFile = clientCertFile;
+        this.clientKeyFile = clientKeyFile;
+        return self();
+    }
+
+    /**
+     * @return Whether a secure connection is required between the client and the Cassandra server.
+     */
+    public boolean isSslRequired() {
+        return StringUtils.isNoneBlank(this.clientCertFile, this.clientKeyFile);
+    }
+
+    /**
+     * Get username
+     * <p>
      * By default, Cassandra has authenticator: AllowAllAuthenticator in cassandra.yaml
      * If username and password need to be used, then authenticator should be set as PasswordAuthenticator
      * (through custom Cassandra configuration) and through CQL with default cassandra-cassandra credentials
@@ -146,7 +185,7 @@ public class CassandraContainer extends GenericContainer<CassandraContainer> {
 
     /**
      * Get password
-     *
+     * <p>
      * By default, Cassandra has authenticator: AllowAllAuthenticator in cassandra.yaml
      * If username and password need to be used, then authenticator should be set as PasswordAuthenticator
      * (through custom Cassandra configuration) and through CQL with default cassandra-cassandra credentials
