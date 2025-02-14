@@ -2,13 +2,7 @@ apply plugin: 'com.gradleup.shadow'
 
 description = "Testcontainers Core"
 
-sourceSets {
-    jarFileTest
-}
-
 test.maxParallelForks = 4
-
-idea.module.testSourceDirs += sourceSets.jarFileTest.allSource.srcDirs
 
 jar {
     manifest {
@@ -28,17 +22,6 @@ shadowJar {
         'META-INF/services/java.security.Provider',
     ].each { exclude(it) }
 }
-
-task jarFileTest(type: Test) {
-    testClassesDirs = sourceSets.jarFileTest.output.classesDirs
-    classpath = sourceSets.jarFileTest.runtimeClasspath
-
-    file(shadowJar.outputs.files.singleFile) // input for correct caching
-    systemProperty("jarFile", shadowJar.outputs.files.singleFile)
-
-    dependsOn(shadowJar)
-}
-project.tasks.check.dependsOn(jarFileTest)
 
 tasks.japicmp {
     packageExcludes = [
@@ -122,12 +105,6 @@ dependencies {
 
     testImplementation 'org.assertj:assertj-core:3.26.3'
     testImplementation 'io.rest-assured:rest-assured:5.5.0'
-
-    jarFileTestCompileOnly "org.projectlombok:lombok:${lombok.version}"
-    jarFileTestAnnotationProcessor "org.projectlombok:lombok:${lombok.version}"
-    jarFileTestImplementation 'junit:junit:4.13.2'
-    jarFileTestImplementation 'org.assertj:assertj-core:3.26.3'
-    jarFileTestImplementation 'org.ow2.asm:asm-debug-all:5.2'
 }
 
 tasks.generatePomFileForMavenJavaPublication.finalizedBy(
@@ -136,3 +113,27 @@ tasks.generatePomFileForMavenJavaPublication.finalizedBy(
         ]
     }
 )
+
+testing {
+    suites {
+        jarFileTest(JvmTestSuite) {
+            dependencies {
+                compileOnly("org.projectlombok:lombok:${lombok.version}")
+                annotationProcessor("org.projectlombok:lombok:${lombok.version}")
+                implementation('junit:junit:4.13.2')
+                implementation('org.assertj:assertj-core:3.26.3')
+                implementation('org.ow2.asm:asm-debug-all:5.2')
+            }
+
+            targets {
+                all {
+                    testTask.configure {
+                        inputs.files(shadowJar.outputs) // input for correct caching
+                        systemProperty("jarFile", shadowJar.outputs.files.singleFile)
+                    }
+                }
+            }
+        }
+    }
+}
+project.tasks.check.dependsOn(jarFileTest)
