@@ -6,6 +6,7 @@ import org.testcontainers.delegate.AbstractDatabaseDelegate;
 import org.testcontainers.exception.ConnectionCreationException;
 import org.testcontainers.ext.ScriptUtils;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -17,6 +18,8 @@ public class JdbcDatabaseDelegate extends AbstractDatabaseDelegate<Statement> {
 
     private JdbcDatabaseContainer container;
 
+    private Connection connection;
+
     private String queryString;
 
     public JdbcDatabaseDelegate(JdbcDatabaseContainer container, String queryString) {
@@ -27,7 +30,8 @@ public class JdbcDatabaseDelegate extends AbstractDatabaseDelegate<Statement> {
     @Override
     protected Statement createNewConnection() {
         try {
-            return container.createConnection(queryString).createStatement();
+            connection = container.createConnection(queryString);
+            return connection.createStatement();
         } catch (SQLException e) {
             log.error("Could not obtain JDBC connection");
             throw new ConnectionCreationException("Could not obtain JDBC connection", e);
@@ -64,6 +68,7 @@ public class JdbcDatabaseDelegate extends AbstractDatabaseDelegate<Statement> {
     @Override
     protected void closeConnectionQuietly(Statement statement) {
         try {
+            connection.close();
             statement.close();
         } catch (Exception e) {
             log.error("Could not close JDBC connection", e);
