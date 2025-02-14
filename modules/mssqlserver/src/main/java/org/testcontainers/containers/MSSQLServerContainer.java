@@ -37,6 +37,10 @@ public class MSSQLServerContainer<SELF extends MSSQLServerContainer<SELF>> exten
 
     private static final int DEFAULT_CONNECT_TIMEOUT_SECONDS = 240;
 
+    private static final Pattern[] PARAMETERS_SANITIZATION_PATTERNS = new Pattern[] {
+        Pattern.compile("(;databaseName=([^;]*)?)"),
+    };
+
     private static final Pattern[] PASSWORD_CATEGORY_VALIDATION_PATTERNS = new Pattern[] {
         Pattern.compile("[A-Z]+"),
         Pattern.compile("[a-z]+"),
@@ -103,13 +107,37 @@ public class MSSQLServerContainer<SELF extends MSSQLServerContainer<SELF>> exten
         if (urlParameters.keySet().stream().map(String::toLowerCase).noneMatch("encrypt"::equals)) {
             urlParameters.put("encrypt", "false");
         }
-        return super.constructUrlForConnection(queryString);
+        String sanitizeQueryString = sanitize(queryString);
+
+        String baseUrl = getJdbcUrl();
+
+        if ("".equals(sanitizeQueryString)) {
+            return baseUrl;
+        }
+
+        if (!sanitizeQueryString.startsWith(";")) {
+            throw new IllegalArgumentException("The ';' character must be included");
+        }
+
+        return baseUrl.contains(";") ? baseUrl + ';' + sanitizeQueryString.substring(1) : baseUrl + sanitizeQueryString;
     }
 
     @Override
     public String getJdbcUrl() {
         String additionalUrlParams = constructUrlParameters(";", ";");
         return "jdbc:sqlserver://" + getHost() + ":" + getMappedPort(MS_SQL_SERVER_PORT) + additionalUrlParams;
+    }
+
+    private String sanitize(String queryString) {
+        // We cannot forward some parameters to the database.
+        // One of those is the 'databaseName' parameter. The container starts uses the master database
+        // by default.
+
+        String sanitizeQueryString = queryString;
+        for (Pattern p : PARAMETERS_SANITIZATION_PATTERNS) {
+            sanitizeQueryString = p.matcher(sanitizeQueryString).replaceAll("");
+        }
+        return sanitizeQueryString;
     }
 
     @Override

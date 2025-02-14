@@ -47,6 +47,12 @@ Add the following dependency to your `pom.xml`/`build.gradle` file:
 !!! hint
     Adding this Testcontainers library JAR will not automatically add a database driver JAR to your project. You should ensure that your project also has a suitable database driver as a dependency.
 
+## Testcontainer related options
+
+The Testcontainer allows the developer to customize its behavior by passing specific [parameters](./jdbc.md) through the connection URL.    
+
+It is worth noting, however, that the connection URL on MS SQL Server does not follow the [RFC-3986](https://www.rfc-editor.org/rfc/rfc3986) convention. In its case, each parameter is separated by a semi-colon, and we must slightly change the examples when using MS SQL Server. For instance, what would be `jdbc:tc:sqlserver://localhost:1433?TC_TMPFS=/testtmpfs:rw` should become `jdbc:tc:sqlserver://localhost:1433;TC_TMPFS=/testtmpfs:rw` instead.
+
 ## License
 
 See [LICENSE](https://raw.githubusercontent.com/testcontainers/testcontainers-java/main/modules/mssqlserver/LICENSE).

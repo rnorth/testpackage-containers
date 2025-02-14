@@ -80,22 +80,30 @@ public class ConnectionUrl {
      * To avoid mutation after class is instantiated, this method should not be publicly accessible.
      */
     private void parseUrl() {
+        boolean parsingMSSQLUrl = true;
         /*
         Extract from the JDBC connection URL:
          * The database type (e.g. mysql, postgresql, ...)
          * The docker tag, if provided.
          * The URL query string, if provided
        */
-        Matcher urlMatcher = Patterns.URL_MATCHING_PATTERN.matcher(this.getUrl());
+        Matcher urlMatcher = Patterns.MSSQL_URL_MATCHING_PATTERN.matcher(this.getUrl());
+
         if (!urlMatcher.matches()) {
-            //Try for Oracle pattern
-            urlMatcher = Patterns.ORACLE_URL_MATCHING_PATTERN.matcher(this.getUrl());
+            parsingMSSQLUrl = false;
+            //Try for regular pattern
+            urlMatcher = Patterns.URL_MATCHING_PATTERN.matcher(this.getUrl());
             if (!urlMatcher.matches()) {
-                throw new IllegalArgumentException(
-                    "JDBC URL matches jdbc:tc: prefix but the database or tag name could not be identified"
-                );
+                //Try for Oracle pattern
+                urlMatcher = Patterns.ORACLE_URL_MATCHING_PATTERN.matcher(this.getUrl());
+                if (!urlMatcher.matches()) {
+                    throw new IllegalArgumentException(
+                        "JDBC URL matches jdbc:tc: prefix but the database or tag name could not be identified"
+                    );
+                }
             }
         }
+
         databaseType = urlMatcher.group("databaseType");
 
         imageTag = Optional.ofNullable(urlMatcher.group("imageTag"));
@@ -104,29 +112,41 @@ public class ConnectionUrl {
         //Clients can further parse it as needed.
         dbHostString = urlMatcher.group("dbHostString");
 
-        //In case it matches to the default pattern
-        Matcher dbInstanceMatcher = Patterns.DB_INSTANCE_MATCHING_PATTERN.matcher(dbHostString);
-        if (dbInstanceMatcher.matches()) {
-            databaseHost = Optional.of(dbInstanceMatcher.group("databaseHost"));
-            databasePort = Optional.ofNullable(dbInstanceMatcher.group("databasePort")).map(Integer::valueOf);
-            databaseName = Optional.of(dbInstanceMatcher.group("databaseName"));
-        }
-
         queryParameters =
             Collections.unmodifiableMap(
                 parseQueryParameters(Optional.ofNullable(urlMatcher.group("queryParameters")).orElse(""))
             );
 
+        String delimiter = (parsingMSSQLUrl) ? ";" : "&";
+
         String query = queryParameters
             .entrySet()
             .stream()
             .map(e -> e.getKey() + "=" + e.getValue())
-            .collect(Collectors.joining("&"));
+            .collect(Collectors.joining(delimiter));
 
         if (query.trim().length() == 0) {
             queryString = Optional.empty();
         } else {
-            queryString = Optional.of("?" + query);
+            String startingOfQUeryParameters = ((parsingMSSQLUrl) ? ";" : "?");
+            queryString = Optional.of(startingOfQUeryParameters + query);
+        }
+
+        if (parsingMSSQLUrl) {
+            Matcher dbInstanceMatcher = Patterns.MSSQL_DB_INSTANCE_MATCHING_PATTERN.matcher(dbHostString);
+            if (dbInstanceMatcher.matches()) {
+                databaseHost = Optional.of(dbInstanceMatcher.group("databaseHost"));
+                databasePort = Optional.ofNullable(dbInstanceMatcher.group("databasePort")).map(Integer::valueOf);
+                databaseName = Optional.ofNullable(queryParameters.get("databaseName"));
+            }
+        } else {
+            //In case it matches to the default pattern
+            Matcher dbInstanceMatcher = Patterns.DB_INSTANCE_MATCHING_PATTERN.matcher(dbHostString);
+            if (dbInstanceMatcher.matches()) {
+                databaseHost = Optional.of(dbInstanceMatcher.group("databaseHost"));
+                databasePort = Optional.ofNullable(dbInstanceMatcher.group("databasePort")).map(Integer::valueOf);
+                databaseName = Optional.of(dbInstanceMatcher.group("databaseName"));
+            }
         }
 
         containerParameters = Collections.unmodifiableMap(parseContainerParameters());
@@ -212,6 +232,15 @@ public class ConnectionUrl {
             "(?<queryParameters>\\?.*)?"
         );
 
+        Pattern MSSQL_URL_MATCHING_PATTERN = Pattern.compile(
+            "jdbc:tc:" +
+            "(?<databaseType>[sqlserver]+)" +
+            "(:(?<imageTag>[^:]+))?" +
+            "://" +
+            "(?<dbHostString>[^;]+)" +
+            "(?<queryParameters>;?.*)?"
+        );
+
         Pattern ORACLE_URL_MATCHING_PATTERN = Pattern.compile(
             "jdbc:tc:" +
             "(?<databaseType>[a-z]+)" +
@@ -223,6 +252,10 @@ public class ConnectionUrl {
             "@" +
             "(?<dbHostString>[^?]+)" +
             "(?<queryParameters>\\?.*)?"
+        );
+
+        Pattern MSSQL_DB_INSTANCE_MATCHING_PATTERN = Pattern.compile(
+            "(?<databaseHost>[^:|\\/^]+)" + "(\\/(?<databaseInstance>[^:]+))?" + "(:(?<databasePort>[0-9]+))?"
         );
 
         //Matches to part of string - hostname:port/databasename
@@ -257,7 +290,7 @@ public class ConnectionUrl {
 
         Pattern TC_PARAM_MATCHING_PATTERN = Pattern.compile(TC_PARAM_NAME_PATTERN + "=([^?&]+)");
 
-        Pattern QUERY_PARAM_MATCHING_PATTERN = Pattern.compile("([^?&=]+)=([^?&]*)");
+        Pattern QUERY_PARAM_MATCHING_PATTERN = Pattern.compile("([^?&;=]+)=([^?&;]*)");
     }
 
     @Getter
