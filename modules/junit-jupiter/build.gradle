@@ -8,7 +8,7 @@ dependencies {
     testImplementation project(':mysql')
     testImplementation project(':postgresql')
     testImplementation 'com.zaxxer:HikariCP:4.0.3'
-    testImplementation 'redis.clients:jedis:5.1.5'
+    testImplementation 'redis.clients:jedis:5.2.0'
     testImplementation 'org.apache.httpcomponents:httpclient:4.5.14'
     testImplementation ('org.mockito:mockito-core:4.11.0') {
         exclude(module: 'hamcrest-core')
