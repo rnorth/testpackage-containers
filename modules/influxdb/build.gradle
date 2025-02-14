@@ -7,5 +7,5 @@ dependencies {
 
     testImplementation 'org.assertj:assertj-core:3.26.3'
     testImplementation 'org.influxdb:influxdb-java:2.24'
-    testImplementation "com.influxdb:influxdb-client-java:6.12.0"
+    testImplementation "com.influxdb:influxdb-client-java:7.2.0"
 }
