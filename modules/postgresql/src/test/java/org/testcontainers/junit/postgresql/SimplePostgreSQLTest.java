@@ -61,6 +61,25 @@ public class SimplePostgreSQLTest extends AbstractContainerDatabaseTest {
     }
 
     @Test
+    public void testWithConfigOption() throws SQLException {
+        try (
+            PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(PostgreSQLTestImages.POSTGRES_TEST_IMAGE)
+                .withConfigOption("max_connections", "42")
+        ) {
+            postgres.start();
+
+            ResultSet resultSet = performQuery(postgres, "SELECT current_setting('max_connections')");
+            String result = resultSet.getString(1);
+            assertThat(result).as("max_connections should be overriden").isEqualTo("42");
+
+            // Ensure default config
+            resultSet = performQuery(postgres, "SELECT current_setting('fsync')");
+            result = resultSet.getString(1);
+            assertThat(result).as("fsync should not overriden").isEqualTo("off");
+        }
+    }
+
+    @Test
     public void testMissingInitScript() {
         try (
             PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(PostgreSQLTestImages.POSTGRES_TEST_IMAGE)
