@@ -4,6 +4,6 @@ dependencies {
     api project(':jdbc')
 
     testImplementation project(':jdbc-test')
-    testRuntimeOnly 'com.databend:databend-jdbc:0.3.2'
+    testRuntimeOnly 'com.databend:databend-jdbc:0.3.4'
     testImplementation 'org.assertj:assertj-core:3.26.3'
 }
