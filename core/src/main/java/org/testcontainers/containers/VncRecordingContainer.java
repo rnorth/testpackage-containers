@@ -28,6 +28,8 @@ public class VncRecordingContainer extends GenericContainer<VncRecordingContaine
 
     private static final String ORIGINAL_RECORDING_FILE_NAME = "/screen.flv";
 
+    private static final String COPY_OF_ORIGINAL_RECORDING_FILE_NAME = "/screen_copy.flv";
+
     public static final String DEFAULT_VNC_PASSWORD = "secret";
 
     public static final int DEFAULT_VNC_PORT = 5900;
@@ -114,7 +116,8 @@ public class VncRecordingContainer extends GenericContainer<VncRecordingContaine
 
     @SneakyThrows
     public InputStream streamRecording() {
-        String newRecordingFileName = videoFormat.reencodeRecording(this, ORIGINAL_RECORDING_FILE_NAME);
+        execInContainer("cp", ORIGINAL_RECORDING_FILE_NAME, COPY_OF_ORIGINAL_RECORDING_FILE_NAME);
+        String newRecordingFileName = videoFormat.reencodeRecording(this, COPY_OF_ORIGINAL_RECORDING_FILE_NAME);
 
         TarArchiveInputStream archiveInputStream = new TarArchiveInputStream(
             dockerClient.copyArchiveFromContainerCmd(getContainerId(), newRecordingFileName).exec()
