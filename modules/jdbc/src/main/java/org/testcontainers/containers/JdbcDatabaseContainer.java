@@ -241,6 +241,17 @@ public abstract class JdbcDatabaseContainer<SELF extends JdbcDatabaseContainer<S
     }
 
     /**
+     * Creates a connection to the underlying containerized database
+     * instance without any parameters.
+     *
+     * @return a Connection
+     * @throws SQLException if there is a repeated failure to create the connection
+     */
+    public Connection createConnection() throws SQLException, NoDriverFoundException {
+        return createConnection("");
+    }
+
+    /**
      * Creates a connection to the underlying containerized database instance.
      *
      * @param queryString query string parameters that should be appended to the JDBC connection URL.
