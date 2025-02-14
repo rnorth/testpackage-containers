@@ -4,6 +4,6 @@ dependencies {
     api project(':jdbc')
 
     testImplementation project(':jdbc-test')
-    testRuntimeOnly 'com.ibm.db2:jcc:11.5.9.0'
+    testRuntimeOnly 'com.ibm.db2:jcc:12.1.0.0'
     testImplementation 'org.assertj:assertj-core:3.26.3'
 }
