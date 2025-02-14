@@ -530,7 +530,7 @@ public class GenericContainer<SELF extends GenericContainer<SELF>>
                 throw e;
             }
 
-            logger().info("Container {} started in {}", dockerImageName, Duration.between(startedAt, Instant.now()));
+            logger().info("Container {} started in {}ms", dockerImageName, Duration.between(startedAt, Instant.now()).toMillis());
             containerIsStarted(containerInfo, reused);
         } catch (Exception e) {
             if (e instanceof UndeclaredThrowableException && e.getCause() instanceof Exception) {
