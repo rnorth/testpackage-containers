@@ -10,6 +10,7 @@ import org.testcontainers.containers.ContainerLaunchException;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.containers.wait.strategy.WaitAllStrategy;
+import org.testcontainers.images.builder.Transferable;
 import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.utility.MountableFile;
 
@@ -76,6 +77,8 @@ public class HiveMQContainer extends GenericContainer<HiveMQContainer> {
     @NotNull
     private final WaitAllStrategy waitStrategy = new WaitAllStrategy();
 
+    private boolean isStarted = false;
+
     public HiveMQContainer(final @NotNull DockerImageName dockerImageName) {
         super(dockerImageName);
         dockerImageName.assertCompatibleWith(DEFAULT_HIVEMQ_CE_IMAGE_NAME, DEFAULT_HIVEMQ_EE_IMAGE_NAME);
@@ -115,10 +118,10 @@ public class HiveMQContainer extends GenericContainer<HiveMQContainer> {
 
     @Override
     protected void configure() {
-        final String removeCommand;
-        withCreateContainerCmdModifier(it -> it.withEntrypoint("/bin/sh"));
+        if (removePrepackagedExtensions()) {
+            withCreateContainerCmdModifier(it -> it.withEntrypoint("/bin/sh"));
 
-        if (removeAllPrepackagedExtensions || !prepackagedExtensionsToRemove.isEmpty()) {
+            final String removeCommand;
             if (removeAllPrepackagedExtensions) {
                 removeCommand = "rm -rf /opt/hivemq/extensions/** &&";
             } else {
@@ -128,19 +131,39 @@ public class HiveMQContainer extends GenericContainer<HiveMQContainer> {
                         .map(extensionId -> "rm -rf /opt/hivemq/extensions/" + extensionId + "&&")
                         .collect(Collectors.joining());
             }
-        } else {
-            removeCommand = "";
+            setCommand(
+                "-c",
+                removeCommand +
+                    "cp -r '/opt/hivemq/temp-extensions/'* /opt/hivemq/extensions/ ; " +
+                    "chmod -R 777 /opt/hivemq/extensions ; " +
+                    "/opt/docker-entrypoint.sh /opt/hivemq/bin/run.sh"
+            );
         }
-        setCommand(
-            "-c",
-            removeCommand +
-            "cp -r '/opt/hivemq/temp-extensions/'* /opt/hivemq/extensions/ ; " +
-            "chmod -R 777 /opt/hivemq/extensions ; " +
-            "/opt/docker-entrypoint.sh /opt/hivemq/bin/run.sh"
-        );
+    }
+
+    private boolean removePrepackagedExtensions() {
+        return removeAllPrepackagedExtensions || !prepackagedExtensionsToRemove.isEmpty();
+    }
+
+    @Override
+    public void copyFileToContainer(final @NotNull MountableFile mountableFile, final @NotNull String containerPath) {
+        super.copyFileToContainer(mountableFile, mapContainerPathIfRequired(containerPath));
+    }
+
+    @Override
+    public void copyFileToContainer(final @NotNull Transferable transferable, final @NotNull String containerPath) {
+        super.copyFileToContainer(transferable, mapContainerPathIfRequired(containerPath));
+    }
+
+    private @NotNull String mapContainerPathIfRequired(final @NotNull String containerPath) {
+        if (!isStarted && removePrepackagedExtensions() && containerPath.startsWith("/opt/hivemq/extensions/")) {
+            return "/opt/hivemq/temp-extensions/" + containerPath.substring("/opt/hivemq/extensions/".length());
+        }
+        return containerPath;
     }
 
     protected void containerIsStarted(final @NotNull InspectContainerResponse containerInfo) {
+        isStarted = true;
         if (controlCenterEnabled) {
             LOGGER.info(
                 "The HiveMQ Control Center is reachable under: http://{}:{}",
@@ -208,11 +231,9 @@ public class HiveMQContainer extends GenericContainer<HiveMQContainer> {
 
     /**
      * Wraps the given class and all its subclasses into an extension
-     * and puts it into '/opt/hivemq/temp-extensions/{extension-id}' inside the container.
+     * and puts it into '/opt/hivemq/extensions/{extension-id}' inside the container.
      * <p>
      * Must be called before the container is started.
-     * <p>
-     * The contents of the '/opt/hivemq/temp-extensions/' directory are copied to '/opt/hivemq/extensions/' before the container is started.
      *
      * @param hiveMQExtension the {@link HiveMQExtension} of the extension
      * @return self
@@ -221,7 +242,7 @@ public class HiveMQContainer extends GenericContainer<HiveMQContainer> {
         try {
             final File extension = hiveMQExtension.createExtension(hiveMQExtension);
             final MountableFile mountableExtension = MountableFile.forHostPath(extension.getPath(), MODE);
-            withCopyFileToContainer(mountableExtension, "/opt/hivemq/temp-extensions/" + hiveMQExtension.getId());
+            withCopyFileToContainer(mountableExtension, "/opt/hivemq/extensions/" + hiveMQExtension.getId());
         } catch (final Exception e) {
             throw new ContainerLaunchException(e.getMessage() == null ? "" : e.getMessage(), e);
         }
@@ -229,13 +250,11 @@ public class HiveMQContainer extends GenericContainer<HiveMQContainer> {
     }
 
     /**
-     * Puts the given extension folder into '/opt/hivemq/temp-extensions/{directory-name}' inside the container.
+     * Puts the given extension folder into '/opt/hivemq/extensions/{directory-name}' inside the container.
      * It must at least contain a valid hivemq-extension.xml and a valid extension.jar in order to be executed.
      * The directory-name is taken from the id defined in the hivemq-extension.xml.
      * <p>
      * Must be called before the container is started.
-     * <p>
-     * The contents of the '/opt/hivemq/temp-extensions/' directory are copied to '/opt/hivemq/extensions/' before the container is started.
      *
      * @param mountableExtension the extension folder on the host machine
      * @return self
@@ -256,7 +275,7 @@ public class HiveMQContainer extends GenericContainer<HiveMQContainer> {
         }
         try {
             final String extensionDirName = getExtensionDirectoryName(extensionDir);
-            final String containerPath = "/opt/hivemq/temp-extensions/" + extensionDirName;
+            final String containerPath = "/opt/hivemq/extensions/" + extensionDirName;
             withCopyFileToContainer(cloneWithFileMode(mountableExtension), containerPath);
             LOGGER.info("Putting extension '{}' into '{}'", extensionDirName, containerPath);
         } catch (final Exception e) {
@@ -350,11 +369,9 @@ public class HiveMQContainer extends GenericContainer<HiveMQContainer> {
     }
 
     /**
-     * Puts the given file into the root of the extension's home '/opt/hivemq/temp-extensions/{extensionId}/'.
+     * Puts the given file into the root of the extension's home '/opt/hivemq/extensions/{extensionId}/'.
      * <p>
      * Must be called before the container is started.
-     * <p>
-     * The contents of the '/opt/hivemq/temp-extensions/' directory are copied to '/opt/hivemq/extensions/' before the container is started.
      *
      * @param file        the file on the host machine
      * @param extensionId the extension
@@ -368,11 +385,9 @@ public class HiveMQContainer extends GenericContainer<HiveMQContainer> {
     }
 
     /**
-     * Puts the given file into given subdirectory of the extensions's home '/opt/hivemq/temp-extensions/{id}/{pathInExtensionHome}/'
+     * Puts the given file into given subdirectory of the extensions's home '/opt/hivemq/extensions/{id}/{pathInExtensionHome}/'
      * <p>
      * Must be called before the container is started.
-     * <p>
-     * The contents of the '/opt/hivemq/temp-extensions/' directory are copied to '/opt/hivemq/extensions/' before the container is started.
      *
      * @param file                the file on the host machine
      * @param extensionId         the extension
@@ -386,7 +401,7 @@ public class HiveMQContainer extends GenericContainer<HiveMQContainer> {
     ) {
         return withFileInHomeFolder(
             file,
-            "/temp-extensions/" + extensionId + PathUtil.prepareAppendPath(pathInExtensionHome)
+            "/extensions/" + extensionId + PathUtil.prepareAppendPath(pathInExtensionHome)
         );
     }
 
