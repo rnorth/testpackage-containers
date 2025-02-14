@@ -33,6 +33,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -165,9 +166,11 @@ public interface ContainerState {
 
         Ports.Binding[] binding = new Ports.Binding[0];
         final InspectContainerResponse containerInfo = this.getContainerInfo();
-        if (containerInfo != null) {
-            binding = containerInfo.getNetworkSettings().getPorts().getBindings().get(new ExposedPort(originalPort));
-        }
+        binding = Optional.ofNullable(containerInfo)
+            .flatMap(it -> Optional.ofNullable(it.getNetworkSettings()))
+            .flatMap(it -> Optional.ofNullable(it.getPorts()))
+            .flatMap(it -> Optional.ofNullable(it.getBindings()))
+            .flatMap(it -> Optional.ofNullable(it.get(new ExposedPort(originalPort)))).orElse(null);
 
         if (binding != null && binding.length > 0 && binding[0] != null) {
             return Integer.valueOf(binding[0].getHostPortSpec());
