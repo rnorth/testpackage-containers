@@ -39,7 +39,7 @@ public class SimpleMariaDBTest extends AbstractContainerDatabaseTest {
     public void testSpecificVersion() throws SQLException {
         try (
             MariaDBContainer<?> mariadbOldVersion = new MariaDBContainer<>(
-                MariaDBTestImages.MARIADB_IMAGE.withTag("10.3.39")
+                MariaDBTestImages.MARIADB_IMAGE.withTag("10.11.10")
             )
         ) {
             mariadbOldVersion.start();
@@ -49,7 +49,7 @@ public class SimpleMariaDBTest extends AbstractContainerDatabaseTest {
 
             assertThat(resultSetString)
                 .as("The database version can be set using a container rule parameter")
-                .startsWith("10.3.39");
+                .startsWith("10.11.10");
         }
     }
 
@@ -59,7 +59,7 @@ public class SimpleMariaDBTest extends AbstractContainerDatabaseTest {
 
         try (
             MariaDBContainer<?> mariadbCustomConfig = new MariaDBContainer<>(
-                MariaDBTestImages.MARIADB_IMAGE.withTag("10.3.39")
+                MariaDBTestImages.MARIADB_IMAGE.withTag("10.11.10")
             )
                 .withConfigurationOverride("somepath/mariadb_conf_override")
         ) {
@@ -107,7 +107,7 @@ public class SimpleMariaDBTest extends AbstractContainerDatabaseTest {
 
         try (
             MariaDBContainer<?> mariadbCustomConfig = new MariaDBContainer<>(
-                MariaDBTestImages.MARIADB_IMAGE.withTag("10.3.39")
+                MariaDBTestImages.MARIADB_IMAGE.withTag("10.11.10")
             )
                 .withConfigurationOverride("somepath/mariadb_conf_override")
         ) {
@@ -135,6 +135,18 @@ public class SimpleMariaDBTest extends AbstractContainerDatabaseTest {
     @Test
     public void testEmptyPasswordWithRootUser() throws SQLException {
         try (MariaDBContainer<?> mysql = new MariaDBContainer<>("mariadb:11.2.4").withUsername("root")) {
+            mysql.start();
+
+            ResultSet resultSet = performQuery(mysql, "SELECT 1");
+            int resultSetInt = resultSet.getInt(1);
+
+            assertThat(resultSetInt).isEqualTo(1);
+        }
+    }
+
+    @Test
+    public void testFondationImages() throws SQLException {
+        try (MariaDBContainer<?> mysql = new MariaDBContainer<>("quay.io/repository/mariadb-foundation/mariadb-devel?tab=tags&tag=11.7").withUsername("root")) {
             mysql.start();
 
             ResultSet resultSet = performQuery(mysql, "SELECT 1");

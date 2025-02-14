@@ -17,8 +17,10 @@ public class MariaDBContainer<SELF extends MariaDBContainer<SELF>> extends JdbcD
 
     private static final DockerImageName DEFAULT_IMAGE_NAME = DockerImageName.parse("mariadb");
 
+    private static final DockerImageName FOUNDATION_IMAGE_NAME = DockerImageName.parse("quay.io/repository/mariadb-foundation/mariadb-devel");
+
     @Deprecated
-    public static final String DEFAULT_TAG = "10.3.6";
+    public static final String DEFAULT_TAG = "10.11.10";
 
     public static final String NAME = "mariadb";
 
@@ -55,7 +57,7 @@ public class MariaDBContainer<SELF extends MariaDBContainer<SELF>> extends JdbcD
 
     public MariaDBContainer(final DockerImageName dockerImageName) {
         super(dockerImageName);
-        dockerImageName.assertCompatibleWith(DEFAULT_IMAGE_NAME);
+        dockerImageName.assertCompatibleWith(DEFAULT_IMAGE_NAME, FOUNDATION_IMAGE_NAME);
 
         addExposedPort(MARIADB_PORT);
     }

@@ -13,7 +13,7 @@ public class MariaDBR2DBCDatabaseContainerTest extends AbstractR2DBCDatabaseCont
 
     @Override
     protected String createR2DBCUrl() {
-        return "r2dbc:tc:mariadb:///db?TC_IMAGE_TAG=10.3.39";
+        return "r2dbc:tc:mariadb:///db?TC_IMAGE_TAG=10.11.10";
     }
 
     @Override
