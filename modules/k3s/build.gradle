@@ -6,7 +6,7 @@ dependencies {
     // https://youtu.be/otCpCn0l4Wo
     // The core module depends on jackson-databind 2.8.x for backward compatibility.
     // Any >2.8 version here is not compatible with jackson-databind 2.8.x.
-    shaded 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.8.8'
+    shaded 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.8.9'
 
     testImplementation 'io.fabric8:kubernetes-client:6.13.1'
     testImplementation 'io.kubernetes:client-java:21.0.1-legacy'
