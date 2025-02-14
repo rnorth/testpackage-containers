@@ -6,5 +6,5 @@ dependencies {
     // YCQL driver
     testImplementation 'com.yugabyte:java-driver-core:4.15.0-yb-2-TESTFIX.0'
     // YSQL driver
-    testRuntimeOnly 'com.yugabyte:jdbc-yugabytedb:42.3.5-yb-6'
+    testRuntimeOnly 'com.yugabyte:jdbc-yugabytedb:42.7.3-yb-2'
 }
