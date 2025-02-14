@@ -43,7 +43,7 @@ jobs:
       - name: Notify to Slack on failures
         if: failure()
         id: slack
-        uses: slackapi/slack-github-action@v1.27.0
+        uses: slackapi/slack-github-action@v2.0.0
         with:
           payload: |
             {
