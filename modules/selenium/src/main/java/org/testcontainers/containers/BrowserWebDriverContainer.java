@@ -181,11 +181,7 @@ public class BrowserWebDriverContainer<SELF extends BrowserWebDriverContainer<SE
                 withNetwork(Network.SHARED);
             }
 
-            vncRecordingContainer =
-                new VncRecordingContainer(this)
-                    .withVncPassword(DEFAULT_PASSWORD)
-                    .withVncPort(VNC_PORT)
-                    .withVideoFormat(recordingFormat);
+            configureVncRecorderContainer();
         }
 
         if (customImageName != null) {
@@ -228,6 +224,21 @@ public class BrowserWebDriverContainer<SELF extends BrowserWebDriverContainer<SE
         setStartupAttempts(3);
     }
 
+    private void configureVncRecorderContainer() {
+        vncRecordingContainer =
+            new VncRecordingContainer(this)
+                .withVncPassword(DEFAULT_PASSWORD)
+                .withVncPort(VNC_PORT)
+                .withVideoFormat(recordingFormat);
+    }
+
+    protected void reinitializeVncRecorderContainer() {
+        if (vncRecordingContainer != null) {
+            vncRecordingContainer.close();
+        }
+        configureVncRecorderContainer();
+        vncRecordingContainer.start();
+    }
     /**
      * @param capabilities a {@link Capabilities} object for either Chrome or Firefox
      * @param seleniumVersion the version of selenium in use
