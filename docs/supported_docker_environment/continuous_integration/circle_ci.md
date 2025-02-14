@@ -1,18 +1,21 @@
-# CircleCI (Cloud, Server v2.x, and Server v3.x)
+# CircleCI (Cloud, Server v3.x, and Server v4.x)
 
-Your CircleCI configuration should use a dedicated VM for Testcontainers to work. You can achieve this by specifying the 
-executor type in your `.circleci/config.yml` to be `machine` instead of the default `docker` executor (see [Choosing an Executor Type](https://circleci.com/docs/2.0/executor-types/) for more info).  
+Your CircleCI configuration needs to enable Docker environment for Testcontainers to work. You can achieve this by adding the `setup_remote_docker` step to your `.circleci/config.yml`.
 
-Here is a sample CircleCI configuration that does a checkout of a project and runs Maven:
+>When you use the remote Docker environment for a job, any Docker commands you run in your job will be executed locally on the virtual machine used to spin up your primary Docker container. The term remote used here is left over from when remote Docker usage would spin up a separate, remote environment for running Docker commands.
+
+See [Run Docker commands](https://circleci.com/docs/building-docker-images/) for more info. 
+
+Here is a sample CircleCI configuration:
 
 ```yml
 jobs:
   build:
-    # Check https://circleci.com/docs/executor-intro#linux-vm for more details
-    machine: true
+    # Check https://circleci.com/docs/circleci-images/ for more details
+    docker:
+      - image: cimg/openjdk:17.0
     steps:
       - checkout
+      - setup_remote_docker
       - run: mvn -B clean install
 ```
-
-You can learn more about the best practices of using Testcontainers together with CircleCI in [this article](https://www.atomicjar.com/2022/12/testcontainers-with-circleci/).
