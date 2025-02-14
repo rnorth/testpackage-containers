@@ -3,7 +3,7 @@ description = "Testcontainers :: JDBC"
 dependencies {
     api project(':database-commons')
 
-    compileOnly 'org.jetbrains:annotations:24.1.0'
+    compileOnly 'org.jetbrains:annotations:26.0.1'
     testImplementation 'commons-dbutils:commons-dbutils:1.8.1'
     testImplementation 'org.vibur:vibur-dbcp:25.0'
     testImplementation 'org.apache.tomcat:tomcat-jdbc:10.1.30'
