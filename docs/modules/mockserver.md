@@ -16,6 +16,8 @@ And how to set a simple expectation using the Java MockServerClient.
 [Setting a simple expectation](../../modules/mockserver/src/test/java/org/testcontainers/containers/MockServerContainerRuleTest.java) inside_block:testSimpleExpectation
 <!--/codeinclude-->
 
+See [SimpleHttpClient.java](../../modules/mockserver/src/test/java/org/testcontainers/containers/SimpleHttpClient.java) for implentation details of the `responseFromMockserver` method used above.
+
 ## Adding this module to your project dependencies
 
 Add the following dependency to your `pom.xml`/`build.gradle` file:
