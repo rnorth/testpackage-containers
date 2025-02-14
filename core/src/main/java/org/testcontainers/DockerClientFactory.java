@@ -30,8 +30,10 @@ import org.testcontainers.utility.MountableFile;
 import org.testcontainers.utility.ResourceReaper;
 import org.testcontainers.utility.TestcontainersConfiguration;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -68,6 +70,8 @@ public class DockerClientFactory {
         DockerClientFactory.class.getPackage().getImplementationVersion();
 
     public static final Map<String, String> DEFAULT_LABELS = markerLabels();
+
+    private static final String DEFAULT_DOCKER_DOCKER_PATH = "/var/run/docker.sock";
 
     static Map<String, String> markerLabels() {
         String testcontainersVersion = TESTCONTAINERS_VERSION == null ? "unspecified" : TESTCONTAINERS_VERSION;
@@ -174,8 +178,36 @@ public class DockerClientFactory {
         }
 
         URI dockerHost = getTransportConfig().getDockerHost();
-        String path = "unix".equals(dockerHost.getScheme()) ? dockerHost.getRawPath() : "/var/run/docker.sock";
+
+        // When the docker host is not local, assume that the remote one is running using the default privileged mode
+        // and used the standard /var/run/docker.sock socket
+        String path = this.isDockerDaemonSocketLocal(dockerHost) ? dockerHost.getRawPath() : DEFAULT_DOCKER_DOCKER_PATH;
+
         return SystemUtils.IS_OS_WINDOWS ? "/" + path : path;
+    }
+
+    private Boolean isDockerDaemonSocketLocal(URI dockerHost) {
+        if (!"unix".equals(dockerHost.getScheme())) {
+            log.debug("docker host is not a unix socket. Docker socket is not considered local");
+            return false;
+        }
+        // Several Desktop providers runs docker within a virtual machime running on the host
+        // (including Docker Desktop and Rancher Desktop) exposes the Docker socket within the user's home directory.
+        //
+        // Docker ce linux also has a rootless capability that creates a user-owned socket in the $XDG_RUNTIME_DIR folder (usually /run/user/$UID)
+        // see https://docs.docker.com/engine/security/rootless/
+        try {
+            return !Paths
+                .get(dockerHost.getRawPath())
+                .toRealPath()
+                .normalize()
+                .startsWith(System.getProperty("user.home"));
+        } catch (IOException e) {
+            log.debug(
+                "error checking whether the final docker socket path is in user home. Docker socket is considered local"
+            );
+            return true;
+        }
     }
 
     /**
