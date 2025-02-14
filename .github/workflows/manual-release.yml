@@ -1,0 +1,45 @@
+name: Manual Release
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'The version to release'
+        required: true
+        default: '1.20.4.Fiserv'
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-java
+
+      - name: Clear existing docker image cache
+        run: docker image prune -af
+
+      - name: Setup Gradle Build Action
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Set Version
+        run: echo "VERSION=${{ github.event.inputs.version || github.event.release.tag_name }}" >> $GITHUB_ENV
+
+      - name: Run Gradle Build
+        run: ./gradlew build --scan --no-daemon -i -x test
+
+      - name: Run Gradle Publish
+        run: |
+          ./gradlew :testcontainers:publish \
+            -Pversion="${{ github.event.inputs.version }}" --scan --no-daemon -i
+
+      - name: Upload Release Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-artifacts
+          path: core/build/release-artifact

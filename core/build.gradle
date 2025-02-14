@@ -63,8 +63,8 @@ tasks.japicmp {
 configurations.all {
     resolutionStrategy {
         // use lower Jackson version
-        force 'com.fasterxml.jackson.core:jackson-databind:2.8.8'
-        force 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.8.8'
+        force 'com.fasterxml.jackson.core:jackson-databind:2.18.1'
+        force 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.1'
     }
 }
 
@@ -100,7 +100,7 @@ dependencies {
     api 'com.github.docker-java:docker-java-transport-zerodep'
 
     shaded 'com.google.guava:guava:33.3.1-jre'
-    shaded "org.yaml:snakeyaml:1.33"
+    shaded "org.yaml:snakeyaml:2.3"
 
     shaded 'org.glassfish.main.external:trilead-ssh2-repackaged:4.1.2'
 

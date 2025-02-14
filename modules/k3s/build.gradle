@@ -3,10 +3,9 @@ description = "Testcontainers :: K3S"
 dependencies {
     api project(":testcontainers")
 
-    // https://youtu.be/otCpCn0l4Wo
-    // The core module depends on jackson-databind 2.8.x for backward compatibility.
-    // Any >2.8 version here is not compatible with jackson-databind 2.8.x.
-    shaded 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.8.8'
+    // The version of jackson-dataformats must match the version of jackson.
+    // Artifact previously resided with different name prior to version 2.9
+    shaded 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.18.1'
 
     testImplementation 'io.fabric8:kubernetes-client:6.13.1'
     testImplementation 'io.kubernetes:client-java:21.0.1-legacy'

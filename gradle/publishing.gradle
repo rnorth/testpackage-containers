@@ -1,7 +1,7 @@
 apply plugin: 'maven-publish'
 
 task sourceJar(type: Jar) {
-    archiveClassifier.set( 'sources')
+    archiveClassifier.set('sources')
     from sourceSets.main.allJava
 }
 
@@ -57,7 +57,7 @@ publishing {
 
                 def dependenciesNode = rootNode.appendNode('dependencies')
 
-                def apiDeps= project.configurations.api.resolvedConfiguration.firstLevelModuleDependencies
+                def apiDeps = project.configurations.api.resolvedConfiguration.firstLevelModuleDependencies
                 def providedDeps = project.configurations.provided.resolvedConfiguration.firstLevelModuleDependencies
                 def newApiDeps = apiDeps - providedDeps
 
@@ -95,11 +95,7 @@ publishing {
     }
     repositories {
         maven {
-            url("https://oss.sonatype.org/service/local/staging/deploy/maven2")
-            credentials {
-                username = System.getenv("OSSRH_USERNAME")
-                password = System.getenv("OSSRH_PASSWORD")
-            }
+            url = uri("${project(':testcontainers').buildDir}/release-artifact")
         }
     }
 }
