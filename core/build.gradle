@@ -71,8 +71,8 @@ configurations.all {
 dependencies {
     api 'junit:junit:4.13.2'
     api 'org.slf4j:slf4j-api:1.7.36'
-    compileOnly 'org.jetbrains:annotations:24.1.0'
-    testCompileOnly 'org.jetbrains:annotations:24.1.0'
+    compileOnly 'org.jetbrains:annotations:26.0.1'
+    testCompileOnly 'org.jetbrains:annotations:26.0.1'
     api 'org.apache.commons:commons-compress:1.24.0'
     api ('org.rnorth.duct-tape:duct-tape:1.0.8') {
         exclude(group: 'org.jetbrains', module: 'annotations')
