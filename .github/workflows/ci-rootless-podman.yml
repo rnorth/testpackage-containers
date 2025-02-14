@@ -1,0 +1,34 @@
+name: CI-Podman-Rootless
+
+on:
+  pull_request: {}
+  push: { branches: [main] }
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Uninstall unwanted packages
+        # docker would be preferred over podman
+        run: sudo apt-get -q -y --purge remove podman moby-engine moby-buildx && sudo rm -rf /var/run/docker.sock
+      - name: Configure podman
+        run: |
+          mkdir -p $HOME/.config/containers
+          echo '[[registry]]'            > $HOME/.config/containers/registries.conf
+          echo 'prefix = "localhost"'   >> $HOME/.config/containers/registries.conf
+          echo 'location = "localhost"' >> $HOME/.config/containers/registries.conf
+          echo 'insecure = true'        >> $HOME/.config/containers/registries.conf
+      - name: Install latest podman release
+        # see https://podman.io/getting-started/installation#ubuntu
+        run: |
+          curl -fsSL https://download.opensuse.org/repositories/devel:kubic:libcontainers:unstable/xUbuntu_$(lsb_release -rs)/Release.key | gpg --dearmor | sudo tee /etc/apt/keyrings/devel_kubic_libcontainers_unstable.gpg > /dev/null
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/devel_kubic_libcontainers_unstable.gpg] https://download.opensuse.org/repositories/devel:kubic:libcontainers:unstable/xUbuntu_$(lsb_release -rs)/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:unstable.list > /dev/null
+          sudo apt-get update -qq
+          sudo apt-get -qq -y install podman
+          systemctl --user enable --now podman.socket
+      - name: Build with Gradle
+        run: ./gradlew --no-daemon --scan -Dtest.profile=podman testcontainers:test

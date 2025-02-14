@@ -103,6 +103,15 @@ subprojects {
                 failOnPassedAfterRetry = false
             }
         }
+
+        if (System.properties['test.profile'] == 'podman') {
+            // The compose container relies on the deprecated link feature, which is not supported by podman
+            exclude '**/*Compose*'
+            filter {
+                // cgroups v2 don't support settings swappiness
+                excludeTestsMatching '*shouldReportOOMAfterWait'
+            }
+        }
     }
 
     tasks.withType(Test).all {
