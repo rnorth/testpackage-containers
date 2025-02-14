@@ -13,6 +13,6 @@ jobs:
     steps:
       - name: combine-prs
         id: combine-prs
-        uses: github/combine-prs@v5.1.0
+        uses: github/combine-prs@v5.2.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
