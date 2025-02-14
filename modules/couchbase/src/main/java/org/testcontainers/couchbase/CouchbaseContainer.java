@@ -342,6 +342,15 @@ public class CouchbaseContainer extends GenericContainer<CouchbaseContainer> {
     }
 
     @Override
+    protected void containerIsStarting(InspectContainerResponse containerInfo, boolean reused) {
+        if (reused) {
+            this.logger().debug("Couchbase container is being reused, assuming correct configuration.");
+        } else {
+            containerIsStarting(containerInfo);
+        }
+    }
+
+    @Override
     protected void containerIsStarting(final InspectContainerResponse containerInfo) {
         logger().debug("Couchbase container is starting, performing configuration.");
 
@@ -356,6 +365,16 @@ public class CouchbaseContainer extends GenericContainer<CouchbaseContainer> {
 
         if (enabledServices.contains(CouchbaseService.INDEX)) {
             timePhase("configureIndexer", this::configureIndexer);
+        }
+    }
+
+    @Override
+    protected void containerIsStarted(InspectContainerResponse containerInfo, boolean reused) {
+        if (reused) {
+            logger()
+                .info("Couchbase container reused and ready! UI available at http://{}:{}", getHost(), getMappedPort(MGMT_PORT));
+        } else {
+            this.containerIsStarted(containerInfo);
         }
     }
 
