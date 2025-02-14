@@ -8,6 +8,7 @@ import org.testcontainers.containers.ContainerLaunchException;
 import org.testcontainers.utility.DockerImageName;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
 public class CassandraContainerTest {
 
@@ -78,6 +79,17 @@ public class CassandraContainerTest {
         ) {
             cassandraContainer.start();
             testInitScript(cassandraContainer, false);
+        }
+    }
+
+    @Test
+    public void testNonexistentInitScript() {
+        try (
+            CassandraContainer cassandraContainer = new CassandraContainer(CASSANDRA_IMAGE)
+                .withInitScript("unknown_script.cql")
+        ) {
+            assertThat(catchThrowable(cassandraContainer::start))
+                .isInstanceOf(ContainerLaunchException.class);
         }
     }
 

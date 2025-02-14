@@ -9,10 +9,7 @@ import org.testcontainers.ext.ScriptUtils.ScriptLoadException;
 import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.utility.MountableFile;
 
-import java.io.File;
 import java.net.InetSocketAddress;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Optional;
 
 /**
@@ -29,6 +26,8 @@ public class CassandraContainer extends GenericContainer<CassandraContainer> {
     private static final Integer CQL_PORT = 9042;
 
     private static final String DEFAULT_LOCAL_DATACENTER = "datacenter1";
+
+    private static final String DEFAULT_INIT_SCRIPT_FILENAME = "init.cql";
 
     private static final String CONTAINER_CONFIG_LOCATION = "/etc/cassandra";
 
@@ -82,20 +81,17 @@ public class CassandraContainer extends GenericContainer<CassandraContainer> {
     private void runInitScriptIfRequired() {
         if (initScriptPath != null) {
             try {
-                URL resource = Thread.currentThread().getContextClassLoader().getResource(initScriptPath);
-                if (resource == null) {
-                    logger().warn("Could not load classpath init script: {}", initScriptPath);
-                    throw new ScriptLoadException(
-                        "Could not load classpath init script: " + initScriptPath + ". Resource not found."
-                    );
-                }
-                // The init script is executed as is by the cqlsh command, so copy it into the container.
-                String targetInitScriptName = new File(resource.toURI()).getName();
-                copyFileToContainer(MountableFile.forClasspathResource(initScriptPath), targetInitScriptName);
-                new CassandraDatabaseDelegate(this).execute(null, targetInitScriptName, -1, false, false);
-            } catch (URISyntaxException e) {
-                logger().warn("Could not copy init script into container: {}", initScriptPath);
-                throw new ScriptLoadException("Could not copy init script into container: " + initScriptPath, e);
+                final MountableFile originalInitScript = MountableFile.forClasspathResource(initScriptPath);
+                // The init script is executed as is by the cqlsh command, so copy it into the container. The name
+                // of the script is generic since it's not important to keep the original name.
+                copyFileToContainer(originalInitScript, DEFAULT_INIT_SCRIPT_FILENAME);
+                new CassandraDatabaseDelegate(this).execute(null, DEFAULT_INIT_SCRIPT_FILENAME, -1, false, false);
+            } catch (IllegalArgumentException e) {
+                // MountableFile.forClasspathResource will throw an IllegalArgumentException if the resource cannot
+                // be found.
+                logger().warn("Could not load classpath init script: {}", initScriptPath);
+                throw new ScriptLoadException(
+                    "Could not load classpath init script: " + initScriptPath + ". Resource not found.", e);
             } catch (ScriptUtils.ScriptStatementFailedException e) {
                 logger().error("Error while executing init script: {}", initScriptPath, e);
                 throw new ScriptUtils.UncategorizedScriptException(
