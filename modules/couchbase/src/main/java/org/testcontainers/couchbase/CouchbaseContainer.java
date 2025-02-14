@@ -431,16 +431,32 @@ public class CouchbaseContainer extends GenericContainer<CouchbaseContainer> {
     private void renameNode() {
         logger().debug("Renaming Couchbase Node from localhost to {}", getHost());
 
-        @Cleanup
-        Response response = doHttpRequest(
-            MGMT_PORT,
-            "/node/controller/rename",
-            "POST",
-            new FormBody.Builder().add("hostname", getInternalIpAddress()).build(),
-            false
-        );
+        for(int i=1; i<=6; i++) {
+            try {
+                @Cleanup
+                Response response = doHttpRequest(
+                  MGMT_PORT,
+                  "/node/controller/rename",
+                  "POST",
+                  new FormBody.Builder().add("hostname", getInternalIpAddress()).build(),
+                  false
+                );
+                checkSuccessfulResponse(response, "Could not rename couchbase node");
+                break;
+            } catch (Exception e) {
+                if(i==6) {
+                    throw e;
+                } else {
+                    logger().debug("Error when trying to rename node, will retry. {}" ,e);
+                    try {
+                        Thread.sleep(10000);
+                    } catch (InterruptedException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+            }
+        }
 
-        checkSuccessfulResponse(response, "Could not rename couchbase node");
     }
 
     /**
