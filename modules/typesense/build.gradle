@@ -4,5 +4,5 @@ dependencies {
     api project(':testcontainers')
 
     testImplementation 'org.assertj:assertj-core:3.26.3'
-    testImplementation 'org.typesense:typesense-java:0.9.0'
+    testImplementation 'org.typesense:typesense-java:1.1.0'
 }
