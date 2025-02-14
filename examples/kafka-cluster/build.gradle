@@ -10,7 +10,7 @@ dependencies {
     testCompileOnly "org.projectlombok:lombok:1.18.34"
     testAnnotationProcessor "org.projectlombok:lombok:1.18.34"
     testImplementation 'org.testcontainers:kafka'
-    testImplementation 'org.apache.kafka:kafka-clients:3.8.0'
+    testImplementation 'org.apache.kafka:kafka-clients:3.9.0'
     testImplementation 'org.assertj:assertj-core:3.26.3'
     testImplementation 'com.google.guava:guava:23.0'
     testImplementation 'ch.qos.logback:logback-classic:1.3.14'
