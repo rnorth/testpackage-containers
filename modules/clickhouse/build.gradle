@@ -5,11 +5,11 @@ dependencies {
     api project(':jdbc')
 
     compileOnly project(':r2dbc')
-    compileOnly(group: 'com.clickhouse', name: 'clickhouse-r2dbc', version: '0.7.0', classifier: 'http')
+    compileOnly(group: 'com.clickhouse', name: 'clickhouse-r2dbc', version: '0.7.1-patch1', classifier: 'http')
 
     testImplementation project(':jdbc-test')
     testRuntimeOnly(group: 'com.clickhouse', name: 'clickhouse-jdbc', version: '0.7.0', classifier: 'http')
     testImplementation 'org.assertj:assertj-core:3.26.3'
     testImplementation testFixtures(project(':r2dbc'))
-    testRuntimeOnly(group: 'com.clickhouse', name: 'clickhouse-r2dbc', version: '0.7.0', classifier: 'http')
+    testRuntimeOnly(group: 'com.clickhouse', name: 'clickhouse-r2dbc', version: '0.7.1-patch1', classifier: 'http')
 }
