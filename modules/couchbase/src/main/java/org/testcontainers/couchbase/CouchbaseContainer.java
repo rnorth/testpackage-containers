@@ -685,28 +685,40 @@ public class CouchbaseContainer extends GenericContainer<CouchbaseContainer> {
 
             if (bucket.hasPrimaryIndex()) {
                 if (enabledServices.contains(CouchbaseService.QUERY)) {
-                    @Cleanup
-                    Response queryResponse = doHttpRequest(
-                        QUERY_PORT,
-                        "/query/service",
-                        "POST",
-                        new FormBody.Builder()
-                            .add("statement", "CREATE PRIMARY INDEX on `" + bucket.getName() + "`")
-                            .build(),
-                        true
-                    );
+                    timePhase(
+                        "createBucket:" + bucket.getName() + ":createPrimaryIndex",
+                        () -> {
+                            Unreliables.retryUntilSuccess(
+                                1,
+                                TimeUnit.MINUTES,
+                                () -> {
+                                    @Cleanup
+                                    Response queryResponse = doHttpRequest(
+                                        QUERY_PORT,
+                                        "/query/service",
+                                        "POST",
+                                        new FormBody.Builder()
+                                            .add("statement", "CREATE PRIMARY INDEX on `" + bucket.getName() + "`")
+                                            .build(),
+                                        true
+                                    );
 
-                    try {
-                        checkSuccessfulResponse(
-                            queryResponse,
-                            "Could not create primary index for bucket " + bucket.getName()
-                        );
-                    } catch (IllegalStateException ex) {
-                        // potentially ignore the error, the index will be eventually built.
-                        if (!ex.getMessage().contains("Index creation will be retried in background")) {
-                            throw ex;
+                                    try {
+                                        checkSuccessfulResponse(
+                                            queryResponse,
+                                            "Could not create primary index for bucket " + bucket.getName()
+                                        );
+                                    } catch (IllegalStateException ex) {
+                                        // potentially ignore the error, the index will be eventually built.
+                                        if (!ex.getMessage().contains("Index creation will be retried in background")) {
+                                            throw ex;
+                                        }
+                                    }
+                                    return null;
+                                }
+                            );
                         }
-                    }
+                    );
 
                     timePhase(
                         "createBucket:" + bucket.getName() + ":primaryIndexOnline",
