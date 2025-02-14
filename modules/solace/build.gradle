@@ -6,7 +6,7 @@ dependencies {
     shaded 'org.awaitility:awaitility:4.2.0'
 
     testImplementation 'org.assertj:assertj-core:3.26.3'
-    testImplementation 'com.solacesystems:sol-jcsmp:10.24.1'
+    testImplementation 'com.solacesystems:sol-jcsmp:10.25.1'
     testImplementation 'org.apache.qpid:qpid-jms-client:0.61.0'
     testImplementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5'
     testImplementation 'org.apache.httpcomponents:fluent-hc:4.5.14'
