@@ -5,7 +5,7 @@ buildscript {
 
     dependencies {
         // https://github.com/melix/japicmp-gradle-plugin/issues/36
-        classpath 'com.google.guava:guava:33.3.1-jre'
+        classpath 'com.google.guava:guava:33.4.0-jre'
         classpath 'com.github.tjni.captainhook:captain-hook:0.1.5'
     }
 }
