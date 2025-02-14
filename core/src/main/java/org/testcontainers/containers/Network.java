@@ -1,6 +1,7 @@
 package org.testcontainers.containers;
 
 import com.github.dockerjava.api.command.CreateNetworkCmd;
+import com.github.dockerjava.api.exception.ConflictException;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Singular;
@@ -11,6 +12,7 @@ import org.testcontainers.utility.ResourceReaper;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -18,7 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 public interface Network extends AutoCloseable, TestRule {
-    Network SHARED = new NetworkImpl(false, null, Collections.emptySet(), null) {
+    Network SHARED = new NetworkImpl(UUID.randomUUID().toString(), false, null, Collections.emptySet(), null) {
         @Override
         public void close() {
             // Do not allow users to close SHARED network, only ResourceReaper is allowed to close (destroy) it
@@ -42,6 +44,7 @@ public interface Network extends AutoCloseable, TestRule {
     @Getter
     class NetworkImpl extends ExternalResource implements Network {
 
+        @Builder.Default
         private final String name = UUID.randomUUID().toString();
 
         private Boolean enableIpv6;
@@ -97,7 +100,21 @@ public interface Network extends AutoCloseable, TestRule {
             labels.putAll(ResourceReaper.instance().getLabels());
             createNetworkCmd.withLabels(labels);
 
-            return createNetworkCmd.exec().getId();
+            try {
+                return createNetworkCmd.exec().getId();
+            } catch (ConflictException e) {
+                List<com.github.dockerjava.api.model.Network> networks = DockerClientFactory
+                    .instance()
+                    .client()
+                    .listNetworksCmd()
+                    .withNameFilter(name)
+                    .exec();
+                if(networks.size() >= 1) {
+                    return networks.get(0).getId();
+                }
+                throw new IllegalStateException("Unable to create network with name " + name
+                    + " due to conflict, but no existing network found with the same name", e);
+            }
         }
 
         @Override

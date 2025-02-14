@@ -12,6 +12,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(Enclosed.class)
 public class NetworkTest {
 
+    public static final String MY_NETWORK = "myNetwork";
+
     public static class WithRules {
 
         @Rule
@@ -64,14 +66,32 @@ public class NetworkTest {
         }
 
         @Test
+        public void testNetworkSupportReuseNetwork() throws Exception {
+            // useCustomNetwork {
+            try (
+                Network network1 = Network.builder().name(MY_NETWORK).build();
+                Network network2 = Network.builder().name(MY_NETWORK).build();
+            ) {
+                assertThat(network1.getId()).as("network is the same").isEqualTo(network2.getId());
+            }
+            // }
+        }
+
+        @Test
         public void testBuilder() {
-            try (Network network = Network.builder().driver("macvlan").build()) {
+            try (Network network = Network.builder().driver("macvlan").name(MY_NETWORK).build()) {
                 String id = network.getId();
+                com.github.dockerjava.api.model.Network networkResult = DockerClientFactory.instance().client().inspectNetworkCmd().withNetworkId(id).exec();
                 assertThat(
-                    DockerClientFactory.instance().client().inspectNetworkCmd().withNetworkId(id).exec().getDriver()
+                    networkResult.getDriver()
                 )
                     .as("Flag is set")
                     .isEqualTo("macvlan");
+                assertThat(
+                    networkResult.getName()
+                )
+                    .as("Name is set")
+                    .isEqualTo(MY_NETWORK);
             }
         }
 
