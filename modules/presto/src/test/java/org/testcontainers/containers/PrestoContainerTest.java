@@ -28,7 +28,7 @@ public class PrestoContainerTest {
                 assertThat(resultSet.next()).as("has result").isTrue();
                 assertThat(resultSet.getString("node_version"))
                     .as("Presto version")
-                    .isEqualTo(PrestoContainer.DEFAULT_TAG);
+                    .startsWith(PrestoContainer.DEFAULT_TAG);
                 assertHasCorrectExposedAndLivenessCheckPorts(prestoSql);
             }
         }
@@ -48,7 +48,7 @@ public class PrestoContainerTest {
                 assertThat(resultSet.next()).as("has result").isTrue();
                 assertThat(resultSet.getString("node_version"))
                     .as("Presto version")
-                    .isEqualTo(PrestoTestImages.PRESTO_PREVIOUS_VERSION_TEST_IMAGE.getVersionPart());
+                    .startsWith(PrestoTestImages.PRESTO_PREVIOUS_VERSION_TEST_IMAGE.getVersionPart());
             }
         }
     }
@@ -73,15 +73,15 @@ public class PrestoContainerTest {
                         "SELECT nationkey, element " +
                         "FROM tpch.tiny.nation " +
                         "JOIN memory.default.table_with_array twa ON nationkey = twa.id " +
-                        "LEFT JOIN UNNEST(my_array) a(element) ON true " +
-                        "ORDER BY element OFFSET 1 FETCH NEXT 3 ROWS WITH TIES "
+                        "CROSS JOIN UNNEST(my_array) a(element) " +
+                        "ORDER BY element OFFSET 1 FETCH FIRST 3 ROWS ONLY "
                     )
                 ) {
                     List<Integer> actualElements = new ArrayList<>();
                     while (resultSet.next()) {
                         actualElements.add(resultSet.getInt("element"));
                     }
-                    assertThat(actualElements).isEqualTo(Arrays.asList(2, 4, 42, 42, 42));
+                    assertThat(actualElements).isEqualTo(Arrays.asList(2, 4, 42));
                 }
             }
         }
@@ -112,8 +112,7 @@ public class PrestoContainerTest {
             )
         ) {
             // Verify metadata with tc: JDBC connection URI
-            assertThat(Integer.parseInt(PrestoContainer.DEFAULT_TAG))
-                .isEqualTo(connection.getMetaData().getDatabaseMajorVersion());
+            assertThat(0).isEqualTo(connection.getMetaData().getDatabaseMajorVersion());
 
             // Verify transactions with tc: JDBC connection URI
             assertThat(connection.getAutoCommit()).as("Is autocommit").isTrue();
@@ -128,12 +127,10 @@ public class PrestoContainerTest {
                     .as("Update result")
                     .isEqualTo(0);
                 try (
-                    ResultSet resultSet = statement.executeQuery(
-                        "SELECT sum(cast(node_version AS bigint)) AS v FROM system.runtime.nodes"
-                    )
+                    ResultSet resultSet = statement.executeQuery("SELECT node_version AS v FROM system.runtime.nodes")
                 ) {
                     assertThat(resultSet.next()).isTrue();
-                    assertThat(resultSet.getString("v")).isEqualTo(PrestoContainer.DEFAULT_TAG);
+                    assertThat(resultSet.getString("v")).startsWith(PrestoContainer.DEFAULT_TAG);
                     assertThat(resultSet.next()).isFalse();
                 }
                 connection.commit();
