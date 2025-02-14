@@ -4,7 +4,7 @@ apply plugin: 'com.gradleup.shadow'
 
 configurations {
     shaded
-    [apiElements, implementation, compileOnly, testCompile]*.extendsFrom shaded
+    [apiElements, implementation]*.extendsFrom shaded
 }
 configurations.api.canBeResolved = true
 
