@@ -103,7 +103,20 @@ public class MSSQLServerContainer<SELF extends MSSQLServerContainer<SELF>> exten
         if (urlParameters.keySet().stream().map(String::toLowerCase).noneMatch("encrypt"::equals)) {
             urlParameters.put("encrypt", "false");
         }
-        return super.constructUrlForConnection(queryString);
+
+        // The JDBC driver of MS SQL Server does not use the traditional '?'
+        // as the starting character nor the '&' as the delimiter of additional parameters.
+        String baseUrl = getJdbcUrl();
+
+        if ("".equals(queryString)) {
+            return baseUrl;
+        }
+
+        if (!queryString.startsWith(";")) {
+            throw new IllegalArgumentException("The ';' character must be included");
+        }
+
+        return baseUrl + queryString;
     }
 
     @Override
