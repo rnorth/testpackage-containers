@@ -78,7 +78,7 @@ dependencies {
         exclude(group: 'org.jetbrains', module: 'annotations')
     }
 
-    provided('com.google.cloud.tools:jib-core:0.23.0') {
+    provided('com.google.cloud.tools:jib-core:0.27.1') {
         exclude group: 'com.google.guava', module: 'guava'
         exclude group: 'com.fasterxml.jackson.datatype', module: 'jackson-datatype-jsr310'
         exclude group: 'com.fasterxml.jackson.core', module: 'jackson-core'
@@ -106,7 +106,7 @@ dependencies {
 
     shaded 'org.zeroturnaround:zt-exec:1.12'
 
-    testImplementation('com.google.cloud.tools:jib-core:0.23.0')  {
+    testImplementation('com.google.cloud.tools:jib-core:0.27.1')  {
         exclude group: 'com.google.guava', module: 'guava'
     }
     testImplementation 'org.apache.httpcomponents:httpclient:4.5.14'
