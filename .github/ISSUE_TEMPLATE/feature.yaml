@@ -19,6 +19,7 @@ body:
         - Cassandra
         - ChromaDB
         - Clickhouse
+        - Cloudflare
         - CockroachDB
         - CrateDB
         - Consul

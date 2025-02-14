@@ -1,0 +1,7 @@
+description = "Testcontainers :: Cloudflare"
+
+dependencies {
+    api project(":testcontainers")
+
+    testImplementation 'org.assertj:assertj-core:3.25.2'
+}

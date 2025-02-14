@@ -39,6 +39,10 @@
   - changed-files:
     - any-glob-to-any-file:
       - modules/clickhouse/**/*
+"modules/cloudflare":
+  - changed-files:
+      - any-glob-to-any-file:
+          - modules/cloudflare/**/*
 "modules/cockroachdb":
   - changed-files:
     - any-glob-to-any-file:
