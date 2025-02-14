@@ -5,7 +5,7 @@ dependencies {
     // TODO use JDK's HTTP client and/or Apache HttpClient5
     shaded 'com.squareup.okhttp3:okhttp:4.12.0'
 
-    testImplementation 'com.couchbase.client:java-client:3.7.3'
+    testImplementation 'com.couchbase.client:java-client:3.7.6'
     testImplementation 'org.awaitility:awaitility:4.2.0'
     testImplementation 'org.assertj:assertj-core:3.26.3'
 }
