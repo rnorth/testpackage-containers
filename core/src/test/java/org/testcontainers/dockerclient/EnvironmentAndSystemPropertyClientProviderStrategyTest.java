@@ -98,6 +98,39 @@ public class EnvironmentAndSystemPropertyClientProviderStrategyTest {
     }
 
     @Test
+    public void testWhenDockerSocketPresent() {
+        Mockito
+            .doReturn("auto")
+            .when(TestcontainersConfiguration.getInstance())
+            .getEnvVarOrProperty(eq("dockerconfig.source"), anyString());
+        Mockito
+            .doReturn(null)
+            .when(TestcontainersConfiguration.getInstance())
+            .getEnvVarOrUserProperty(eq("docker.host"), isNull());
+        Mockito
+            .doReturn(null)
+            .when(TestcontainersConfiguration.getInstance())
+            .getEnvVarOrUserProperty(eq("docker.tls.verify"), isNull());
+        Mockito
+            .doReturn(null)
+            .when(TestcontainersConfiguration.getInstance())
+            .getEnvVarOrUserProperty(eq("docker.cert.path"), isNull());
+        Mockito
+            .doReturn("/var/run/docker-alt.sock")
+            .when(TestcontainersConfiguration.getInstance())
+            .getEnvVarOrUserProperty(eq("docker.socket.override"), isNull());
+
+        EnvironmentAndSystemPropertyClientProviderStrategy strategy = new EnvironmentAndSystemPropertyClientProviderStrategy();
+
+        TransportConfig transportConfig = strategy.getTransportConfig();
+        assertThat(transportConfig.getDockerHost().toString()).isEqualTo(defaultDockerHost);
+        assertThat(transportConfig.getSslConfig()).isEqualTo(defaultSSLConfig);
+
+        String remoteDockerUnixSocketPath = strategy.getRemoteDockerUnixSocketPath();
+        assertThat(remoteDockerUnixSocketPath).isEqualTo("/var/run/docker-alt.sock");
+    }
+
+    @Test
     public void testWhenDockerHostAndSSLConfigPresent() throws IOException {
         Path tempDir = Files.createTempDirectory("testcontainers-test");
         String tempDirPath = tempDir.toAbsolutePath().toString();

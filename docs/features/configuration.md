@@ -124,9 +124,10 @@ illustrates usage:
 
 ```properties
 docker.client.strategy=org.testcontainers.dockerclient.EnvironmentAndSystemPropertyClientProviderStrategy
-docker.host=tcp\://my.docker.host\:1234     # Equivalent to the DOCKER_HOST environment variable. Colons should be escaped.
-docker.tls.verify=1                         # Equivalent to the DOCKER_TLS_VERIFY environment variable
-docker.cert.path=/some/path                 # Equivalent to the DOCKER_CERT_PATH environment variable
+docker.host=tcp\://my.docker.host\:1234         # Equivalent to the DOCKER_HOST environment variable. Colons should be escaped.
+docker.socket.override=/var/run/docker-alt.sock # Equivalent to the TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE environment variable.
+docker.tls.verify=1                             # Equivalent to the DOCKER_TLS_VERIFY environment variable
+docker.cert.path=/some/path                     # Equivalent to the DOCKER_CERT_PATH environment variable
 ```
 In addition, you can deactivate this behaviour by specifying:
 ```properties

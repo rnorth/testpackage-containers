@@ -71,6 +71,11 @@ public final class EnvironmentAndSystemPropertyClientProviderStrategy extends Do
     }
 
     @Override
+    public String getRemoteDockerUnixSocketPath() {
+        return getSetting("docker.socket.override").orElse(null);
+    }
+
+    @Override
     protected int getPriority() {
         return PRIORITY;
     }
