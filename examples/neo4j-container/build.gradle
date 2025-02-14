@@ -11,5 +11,5 @@ dependencies {
     testImplementation 'org.neo4j.driver:neo4j-java-driver:4.4.18'
     testImplementation 'org.testcontainers:neo4j'
     testImplementation 'org.testcontainers:junit-jupiter'
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
 }

@@ -11,7 +11,7 @@ dependencies {
     testImplementation 'com.hazelcast:hazelcast:5.3.8'
     testImplementation 'ch.qos.logback:logback-classic:1.3.14'
     testImplementation 'org.assertj:assertj-core:3.26.3'
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
 }
 
 test {

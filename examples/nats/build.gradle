@@ -12,7 +12,7 @@ dependencies {
     testImplementation 'io.nats:jnats:2.20.2'
     testImplementation 'ch.qos.logback:logback-classic:1.3.14'
     testImplementation 'org.apache.httpcomponents:httpclient:4.5.14'
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
 }
 
 test {

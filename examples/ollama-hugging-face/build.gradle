@@ -10,7 +10,7 @@ dependencies {
     testImplementation 'org.testcontainers:ollama'
     testImplementation 'org.assertj:assertj-core:3.26.3'
     testImplementation 'ch.qos.logback:logback-classic:1.3.14'
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
     testImplementation 'io.rest-assured:rest-assured:5.5.0'
 }
 
