@@ -4,5 +4,5 @@ dependencies {
     api project(':testcontainers')
 
     testImplementation 'org.assertj:assertj-core:3.26.3'
-    testImplementation 'io.weaviate:client:4.8.3'
+    testImplementation 'io.weaviate:client:5.0.1'
 }
