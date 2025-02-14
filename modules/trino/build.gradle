@@ -4,6 +4,6 @@ dependencies {
     api project(':jdbc')
 
     testImplementation project(':jdbc-test')
-    testRuntimeOnly 'io.trino:trino-jdbc:458'
+    testRuntimeOnly 'io.trino:trino-jdbc:468'
     compileOnly 'org.jetbrains:annotations:24.1.0'
 }
