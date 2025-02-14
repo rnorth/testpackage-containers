@@ -1,5 +1,7 @@
 package org.testcontainers.junit.jupiter;
 
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import lombok.Getter;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
@@ -40,6 +42,7 @@ public class TestcontainersExtension
     private static final String SHARED_LIFECYCLE_AWARE_CONTAINERS = "sharedLifecycleAwareContainers";
 
     private static final String LOCAL_LIFECYCLE_AWARE_CONTAINERS = "localLifecycleAwareContainers";
+    private static final ConcurrentHashMap<String, StoreAdapterThread> STORE_ADAPTER_THREADS = new ConcurrentHashMap<>();
 
     private final DockerAvailableDetector dockerDetector = new DockerAvailableDetector();
 
@@ -75,7 +78,7 @@ public class TestcontainersExtension
             Stream<Startable> startables = storeAdapters
                 .stream()
                 .map(storeAdapter -> {
-                    store.getOrComputeIfAbsent(storeAdapter.getKey(), k -> storeAdapter);
+                    store.getOrComputeIfAbsent(storeAdapter.getKey(), k -> storeAdapterStart(k, storeAdapter));
                     return storeAdapter.container;
                 });
             Startables.deepStart(startables).join();
@@ -129,6 +132,20 @@ public class TestcontainersExtension
     @Override
     public void afterEach(ExtensionContext context) {
         signalAfterTestToContainersFor(LOCAL_LIFECYCLE_AWARE_CONTAINERS, context);
+    }
+
+    private static synchronized StoreAdapter storeAdapterStart(String key, StoreAdapter adapter) {
+        boolean isInitialized = STORE_ADAPTER_THREADS.containsKey(key);
+
+        if (!isInitialized) {
+            StoreAdapter storeAdapter = adapter.start();
+            STORE_ADAPTER_THREADS.put(key, new StoreAdapterThread(storeAdapter));
+            return storeAdapter;
+        }
+
+        StoreAdapterThread storeAdapter = STORE_ADAPTER_THREADS.get(key);
+        storeAdapter.threads.incrementAndGet();
+        return storeAdapter.storeAdapter;
     }
 
     private void signalBeforeTestToContainers(
@@ -263,9 +280,9 @@ public class TestcontainersExtension
     private static class StoreAdapter implements CloseableResource {
 
         @Getter
-        private String key;
+        private final String key;
 
-        private Startable container;
+        private final Startable container;
 
         private StoreAdapter(Class<?> declaringClass, String fieldName, Startable container) {
             this.key = declaringClass.getName() + "." + fieldName;
@@ -279,7 +296,25 @@ public class TestcontainersExtension
 
         @Override
         public void close() {
-            container.stop();
+            int total = STORE_ADAPTER_THREADS.getOrDefault(key, StoreAdapterThread.NULL).threads.decrementAndGet();
+            if (total < 1) {
+                container.stop();
+                STORE_ADAPTER_THREADS.remove(key);
+            }
         }
+
     }
+
+    private static class StoreAdapterThread {
+
+        public static final StoreAdapterThread NULL = new StoreAdapterThread(null);
+        public final StoreAdapter storeAdapter;
+        public final AtomicInteger threads = new AtomicInteger(1);
+
+        private StoreAdapterThread(StoreAdapter storeAdapter) {
+            this.storeAdapter = storeAdapter;
+        }
+
+    }
+
 }
