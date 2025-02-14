@@ -4,6 +4,6 @@ dependencies {
     api project(':testcontainers')
     api 'eu.rekawek.toxiproxy:toxiproxy-java:2.1.7'
 
-    testImplementation 'redis.clients:jedis:5.1.5'
+    testImplementation 'redis.clients:jedis:5.2.0'
     testImplementation 'org.assertj:assertj-core:3.26.3'
 }
