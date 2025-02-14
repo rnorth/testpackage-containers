@@ -2,6 +2,7 @@ package org.testcontainers.utility;
 
 import lombok.Cleanup;
 import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.jetbrains.annotations.NotNull;
@@ -128,6 +129,43 @@ public class MountableFileTest {
         ArchiveEntry entry;
         while ((entry = tais.getNextEntry()) != null) {
             assertThat(entry.getName()).as("no entries should have a trailing slash").doesNotEndWith("/");
+        }
+    }
+
+    @Test
+    public void rootIsDefaultOwner() throws Exception {
+        final MountableFile mountableFile = MountableFile.forClasspathResource("mappable-resource/test-resource.txt");
+
+        @Cleanup
+        final TarArchiveInputStream tais = intoTarArchive(taos -> {
+            mountableFile.transferTo(taos, "path.txt");
+        });
+
+        TarArchiveEntry entry;
+        while ((entry = tais.getNextTarEntry()) != null) {
+            assertEquals("User ID should be 0", 0, entry.getLongUserId());
+            assertEquals("Group ID should be 0", 0, entry.getLongGroupId());
+        }
+    }
+
+    @Test
+    public void canSetOtherOwner() throws Exception {
+        final MountableFile mountableFile = MountableFile.forClasspathResource(
+            "mappable-resource/test-resource.txt",
+            null,
+            1,
+            2
+        );
+
+        @Cleanup
+        final TarArchiveInputStream tais = intoTarArchive(taos -> {
+            mountableFile.transferTo(taos, "path.txt");
+        });
+
+        TarArchiveEntry entry;
+        while ((entry = tais.getNextTarEntry()) != null) {
+            assertEquals("User ID should be 1", 1L, entry.getLongUserId());
+            assertEquals("Group ID should be 2", 2L, entry.getLongGroupId());
         }
     }
 

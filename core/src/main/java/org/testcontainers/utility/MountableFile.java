@@ -54,6 +54,10 @@ public class MountableFile implements Transferable {
 
     private final Integer forcedFileMode;
 
+    private final long userId;
+
+    private final long groupId;
+
     @Getter(lazy = true)
     private final String resolvedPath = resolvePath();
 
@@ -100,7 +104,20 @@ public class MountableFile implements Transferable {
      * @return a {@link MountableFile} that may be used to obtain a mountable path
      */
     public static MountableFile forClasspathResource(@NotNull final String resourceName, Integer mode) {
-        return new MountableFile(getClasspathResource(resourceName, new HashSet<>()).toString(), mode);
+        return forClasspathResource(getClasspathResource(resourceName, new HashSet<>()).toString(), mode, 0, 0);
+    }
+
+    /**
+     * Obtains a {@link MountableFile} corresponding to a resource on the classpath (including resources in JAR files)
+     *
+     * @param resourceName the classpath path to the resource
+     * @param mode octal value of posix file mode (000..777)
+     * @param userId the id of the user owning the file
+     * @param groupId the id of the group owning the file
+     * @return a {@link MountableFile} that may be used to obtain a mountable path
+     */
+    public static MountableFile forClasspathResource(@NotNull final String resourceName, Integer mode, int userId, int groupId) {
+        return new MountableFile(getClasspathResource(resourceName, new HashSet<>()).toString(), mode, userId, groupId);
     }
 
     /**
@@ -122,7 +139,20 @@ public class MountableFile implements Transferable {
      * @return a {@link MountableFile} that may be used to obtain a mountable path
      */
     public static MountableFile forHostPath(final Path path, Integer mode) {
-        return new MountableFile(path.toAbsolutePath().toString(), mode);
+        return new MountableFile(path.toAbsolutePath().toString(), mode, 0, 0);
+    }
+
+    /**
+     * Obtains a {@link MountableFile} corresponding to a file on the docker host filesystem.
+     *
+     * @param path the path to the resource
+     * @param mode octal value of posix file mode (000..777)
+     * @param userId the id of the user owning the file
+     * @param groupId the id of the group owning the file
+     * @return a {@link MountableFile} that may be used to obtain a mountable path
+     */
+    public static MountableFile forHostPath(final Path path, Integer mode, int userId, int groupId) {
+        return new MountableFile(path.toAbsolutePath().toString(), mode, userId, groupId);
     }
 
     @NotNull
@@ -356,6 +386,8 @@ public class MountableFile implements Transferable {
 
             // TarArchiveEntry automatically sets the mode for file/directory, but we can update to ensure that the mode is set exactly (inc executable bits)
             tarEntry.setMode(getUnixFileMode(itemPath));
+            tarEntry.setUserId(userId);
+            tarEntry.setGroupId(groupId);
             tarArchive.putArchiveEntry(tarEntry);
 
             if (sourceFile.isFile()) {
@@ -390,6 +422,16 @@ public class MountableFile implements Transferable {
         } else {
             return 0;
         }
+    }
+
+    @Override
+    public long getUserId() {
+        return userId;
+    }
+
+    @Override
+    public long getGroupId() {
+        return groupId;
     }
 
     @Override
