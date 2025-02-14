@@ -12,7 +12,7 @@ dependencies {
     testImplementation project(':mysql')
     testImplementation project(':postgresql')
 
-    testImplementation 'com.zaxxer:HikariCP:4.0.3'
+    testImplementation 'com.zaxxer:HikariCP:6.2.1'
     testImplementation 'org.apache.httpcomponents:httpclient:4.5.14'
 
     testRuntimeOnly 'org.postgresql:postgresql:42.7.4'
