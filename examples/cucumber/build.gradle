@@ -12,7 +12,7 @@ dependencies {
     implementation 'org.seleniumhq.selenium:selenium-firefox-driver'
     implementation 'org.seleniumhq.selenium:selenium-chrome-driver'
 
-    testImplementation platform('io.cucumber:cucumber-bom:7.18.1')
+    testImplementation platform('io.cucumber:cucumber-bom:7.20.1')
     testImplementation 'io.cucumber:cucumber-java'
     testImplementation 'io.cucumber:cucumber-junit'
     testImplementation 'org.testcontainers:selenium'
