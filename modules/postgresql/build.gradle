@@ -12,5 +12,5 @@ dependencies {
     testImplementation testFixtures(project(':r2dbc'))
     testRuntimeOnly 'io.r2dbc:r2dbc-postgresql:0.8.13.RELEASE'
 
-    compileOnly 'org.jetbrains:annotations:24.1.0'
+    compileOnly 'org.jetbrains:annotations:26.0.1'
 }
