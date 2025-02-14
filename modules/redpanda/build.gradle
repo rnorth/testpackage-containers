@@ -4,7 +4,7 @@ dependencies {
     api project(':testcontainers')
     shaded 'org.freemarker:freemarker:2.3.33'
 
-    testImplementation 'org.apache.kafka:kafka-clients:3.8.0'
+    testImplementation 'org.apache.kafka:kafka-clients:3.9.0'
     testImplementation 'org.assertj:assertj-core:3.26.3'
     testImplementation 'io.rest-assured:rest-assured:5.5.0'
     testImplementation 'org.awaitility:awaitility:4.2.2'
