@@ -1,6 +1,8 @@
 package org.testcontainers.junit;
 
 import com.google.common.io.PatternFilenameFilter;
+import org.awaitility.Awaitility;
+import org.hamcrest.Matchers;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
@@ -117,6 +119,49 @@ public class ChromeRecordingWebDriverContainerTest extends BaseWebDriverContaine
                 File[] files = runSimpleExploreInContainer(chrome, "PASSED-.*\\.mp4");
                 assertThat(files).as("Recorded file found").hasSize(1);
             }
+        }
+
+        @Test
+        public void recordingShouldStop() throws InterruptedException, IOException {
+            File target = vncRecordingDirectory.getRoot();
+            try (
+                BrowserWebDriverContainer<?> chrome = new BrowserWebDriverContainer<>()
+                    .withCapabilities(new ChromeOptions())
+                    .withRecordingMode(VncRecordingMode.RECORD_ALL, target, VncRecordingFormat.MP4)
+                    .withRecordingFileFactory(new DefaultRecordingFileFactory())
+                    .withNetwork(NETWORK)
+            ) {
+                chrome.start();
+                int sizeInitial = getRecordingSize(chrome);
+
+                // Make sure the file size is increasing
+                Awaitility
+                    .await("Make sure that recording file size is increasing initially")
+                    .atMost(1, TimeUnit.SECONDS)
+                    .pollDelay(Duration.ofSeconds(0))
+                    .until(() -> getRecordingSize(chrome), Matchers.greaterThan(sizeInitial));
+
+                // Stop the recording
+                File[] files = runSimpleExploreInContainer(chrome, "PASSED-.*\\.mp4");
+                assertThat(files).as("Recorded file found").hasSize(1);
+                int sizeAfterStopping = getRecordingSize(chrome);
+
+                // Wait for a bit and make sure the file size remains the same after stopping
+                Thread.sleep(1000);
+                assertThat(getRecordingSize(chrome))
+                    .as("Recording file size shouldn't change after recording is stopped")
+                    .isEqualTo(sizeAfterStopping);
+            }
+        }
+
+        public int getRecordingSize(BrowserWebDriverContainer<?> browser) throws IOException, InterruptedException {
+            return Integer.parseInt(
+                browser
+                    .getVncRecordingContainer()
+                    .execInContainer("/usr/bin/stat", "--format=%s", "/screen.flv")
+                    .getStdout()
+                    .trim()
+            );
         }
 
         @Test

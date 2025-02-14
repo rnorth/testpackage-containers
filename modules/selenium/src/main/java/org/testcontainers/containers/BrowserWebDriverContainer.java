@@ -304,6 +304,10 @@ public class BrowserWebDriverContainer<SELF extends BrowserWebDriverContainer<SE
         }
     }
 
+    public VncRecordingContainer getVncRecordingContainer() {
+        return vncRecordingContainer;
+    }
+
     /**
      * Obtain a RemoteWebDriver instance that is bound to an instance of the browser running inside a new container.
      * <p>
@@ -344,6 +348,9 @@ public class BrowserWebDriverContainer<SELF extends BrowserWebDriverContainer<SE
 
     @Override
     public void afterTest(TestDescription description, Optional<Throwable> throwable) {
+        if (vncRecordingContainer != null) {
+            vncRecordingContainer.stopRecording();
+        }
         retainRecordingIfNeeded(description.getFilesystemFriendlyName(), !throwable.isPresent());
     }
 
