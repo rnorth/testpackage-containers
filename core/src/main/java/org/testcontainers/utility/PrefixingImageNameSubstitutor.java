@@ -16,6 +16,9 @@ final class PrefixingImageNameSubstitutor extends ImageNameSubstitutor {
     @VisibleForTesting
     static final String PREFIX_PROPERTY_KEY = "hub.image.name.prefix";
 
+    @VisibleForTesting
+    static final String NORMALIZE_PROPERTY_KEY = "hub.image.name.normalize";
+
     private TestcontainersConfiguration configuration = TestcontainersConfiguration.getInstance();
 
     @VisibleForTesting
@@ -26,6 +29,9 @@ final class PrefixingImageNameSubstitutor extends ImageNameSubstitutor {
     @Override
     public DockerImageName apply(DockerImageName original) {
         final String configuredPrefix = configuration.getEnvVarOrProperty(PREFIX_PROPERTY_KEY, "");
+        final boolean normalize = Boolean.parseBoolean(
+            configuration.getEnvVarOrProperty(NORMALIZE_PROPERTY_KEY, "false")
+        );
 
         if (configuredPrefix.isEmpty()) {
             log.debug("No prefix is configured");
@@ -38,13 +44,27 @@ final class PrefixingImageNameSubstitutor extends ImageNameSubstitutor {
             return original;
         }
 
-        log.debug("Applying changes to image name {}: applying prefix '{}'", original, configuredPrefix);
+        log.debug(
+            "Applying changes to image name {}: applying prefix '{}' with normalization: {}",
+            original,
+            configuredPrefix,
+            normalize
+        );
 
         DockerImageName prefixAsImage = DockerImageName.parse(configuredPrefix);
 
-        return original
+        String repository = original.getRepository();
+        if (normalize && !repository.contains("/")) {
+            repository = DockerImageName.LIBRARY_PREFIX + repository;
+        }
+
+        DockerImageName substituted = original
             .withRegistry(prefixAsImage.getRegistry())
-            .withRepository(prefixAsImage.getRepository() + original.getRepository());
+            .withRepository(prefixAsImage.getRepository() + repository);
+        if (normalize) {
+            substituted = substituted.asCompatibleSubstituteFor(original);
+        }
+        return substituted;
     }
 
     @Override

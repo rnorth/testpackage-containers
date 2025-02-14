@@ -77,6 +77,13 @@ Testcontainers will not apply the prefix to:
 * non-Hub image names (e.g. where another registry is set)
 * Docker Hub image names where the hub registry is explicitly part of the name (i.e. anything with a `docker.io` or `registry.hub.docker.com` host part)
 
+If you want your registry to handle both official Docker Hub images (e.g `postgres`)
+as well as images from other registries (e.g `mycompany/postgres`), you can use the
+`TESTCONTAINERS_HUB_IMAGE_NAME_NORMALIZE` environment variable or the `hub.image.name.normalize`
+configuration option. When set to `true`, Testcontainers will normalize the official Docker Hub
+image names to start with `library/`. When this option is used, Testcontainers will additionally
+disable image compatibility checks done by some containers, so it the compatibility responsibility
+is on the user.
 
 
 ## Developing a custom function for transforming image names on the fly

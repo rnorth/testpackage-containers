@@ -34,6 +34,21 @@ public class PrefixingImageNameSubstitutorTest {
     }
 
     @Test
+    public void testNormalizeToLibraryPath() {
+        when(mockConfiguration.getEnvVarOrProperty(eq(PrefixingImageNameSubstitutor.PREFIX_PROPERTY_KEY), any()))
+            .thenReturn("someregistry.com/our-mirror/");
+        when(mockConfiguration.getEnvVarOrProperty(eq(PrefixingImageNameSubstitutor.NORMALIZE_PROPERTY_KEY), any()))
+            .thenReturn("true");
+
+        final DockerImageName result = underTest.apply(DockerImageName.parse("image:tag"));
+
+        assertThat(result.asCanonicalNameString())
+            .as("The prefix is applied")
+            .isEqualTo("someregistry.com/our-mirror/library/image:tag");
+        result.assertCompatibleWith(DockerImageName.parse("image:tag"));
+    }
+
+    @Test
     public void hubIoRegistryIsNotChanged() {
         when(mockConfiguration.getEnvVarOrProperty(eq(PrefixingImageNameSubstitutor.PREFIX_PROPERTY_KEY), any()))
             .thenReturn("someregistry.com/our-mirror/");

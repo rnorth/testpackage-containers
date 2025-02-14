@@ -26,7 +26,7 @@ public final class DockerImageName {
 
     private static final Pattern REPO_NAME = Pattern.compile(REPO_NAME_PART + "(/" + REPO_NAME_PART + ")*");
 
-    private static final String LIBRARY_PREFIX = "library/";
+    static final String LIBRARY_PREFIX = "library/";
 
     private final String rawName;
 
