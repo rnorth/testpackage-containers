@@ -111,4 +111,12 @@ public class ConnectionUrlTest {
 
         assertThat(url.isInDaemonMode()).as("Daemon flag is set to true.").isTrue();
     }
+
+    @Test
+    public void testHostLessUrl() {
+        String urlString = "jdbc:tc:mysql:///dbname";
+        ConnectionUrl url = ConnectionUrl.newInstance(urlString);
+
+        assertThat(url.getDatabaseName()).as("Database Name value is expected").contains("dbname");
+    }
 }

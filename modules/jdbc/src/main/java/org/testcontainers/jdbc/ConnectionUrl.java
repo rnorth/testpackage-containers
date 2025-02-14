@@ -107,7 +107,7 @@ public class ConnectionUrl {
         //In case it matches to the default pattern
         Matcher dbInstanceMatcher = Patterns.DB_INSTANCE_MATCHING_PATTERN.matcher(dbHostString);
         if (dbInstanceMatcher.matches()) {
-            databaseHost = Optional.of(dbInstanceMatcher.group("databaseHost"));
+            databaseHost = Optional.ofNullable(dbInstanceMatcher.group("databaseHost"));
             databasePort = Optional.ofNullable(dbInstanceMatcher.group("databasePort")).map(Integer::valueOf);
             databaseName = Optional.of(dbInstanceMatcher.group("databaseName"));
         }
@@ -227,13 +227,13 @@ public class ConnectionUrl {
 
         //Matches to part of string - hostname:port/databasename
         Pattern DB_INSTANCE_MATCHING_PATTERN = Pattern.compile(
-            "(?<databaseHost>[^:]+)" +
+            "((?<databaseHost>[^:]+)" +
             "(:(?<databasePort>[0-9]+))?" +
             "(" +
             "(?<sidOrServiceName>[:/])" +
             "|" +
             ";databaseName=" +
-            ")" +
+            ")|/)" +
             "(?<databaseName>[^\\\\?]+)"
         );
 
