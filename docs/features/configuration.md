@@ -35,6 +35,11 @@ Before running any containers Testcontainers will perform a set of startup check
 ```
 It takes a couple of seconds, but if you want to speed up your tests, you can disable the checks once you have everything configured. Add `checks.disable=true` to your `$HOME/.testcontainers.properties` to completely disable them.
 
+## Customizing containers startup behaviour
+
+> **startup.timeout = 60**
+> By default Testcontainers will wait for up to this duration (in seconds) for the container's first mapped network port to start listening. 
+
 ## Customizing images
 
 !!! note

@@ -3,6 +3,7 @@ package org.testcontainers.containers.wait.strategy;
 import lombok.NonNull;
 import org.rnorth.ducttape.ratelimits.RateLimiter;
 import org.rnorth.ducttape.ratelimits.RateLimiterBuilder;
+import org.testcontainers.utility.TestcontainersConfiguration;
 
 import java.time.Duration;
 import java.util.Set;
@@ -36,7 +37,7 @@ public abstract class AbstractWaitStrategy implements WaitStrategy {
     protected WaitStrategyTarget waitStrategyTarget;
 
     @NonNull
-    protected Duration startupTimeout = Duration.ofSeconds(60);
+    protected Duration startupTimeout = Duration.ofSeconds(TestcontainersConfiguration.getInstance().getStartupTimeout());
 
     @NonNull
     private RateLimiter rateLimiter = DOCKER_CLIENT_RATE_LIMITER;

@@ -323,6 +323,10 @@ public class TestcontainersConfiguration {
         return updateUserConfig(prop, value);
     }
 
+    public Integer getStartupTimeout() {
+        return Integer.parseInt((String) properties.getOrDefault("startup.timeout", "60"));
+    }
+
     @Synchronized
     public boolean updateUserConfig(@NonNull String prop, @NonNull String value) {
         try {
