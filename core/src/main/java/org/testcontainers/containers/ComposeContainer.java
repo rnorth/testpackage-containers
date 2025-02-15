@@ -13,6 +13,7 @@ import org.testcontainers.containers.wait.strategy.WaitStrategy;
 import org.testcontainers.lifecycle.Startable;
 import org.testcontainers.utility.Base58;
 import org.testcontainers.utility.DockerImageName;
+import org.testcontainers.utility.TestcontainersConfiguration;
 
 import java.io.File;
 import java.time.Duration;
@@ -69,28 +70,58 @@ public class ComposeContainer extends FailureDetectingExternalResource implement
 
     private List<String> filesInDirectory = new ArrayList<>();
 
-    public ComposeContainer(File... composeFiles) {
-        this(Arrays.asList(composeFiles));
+    public ComposeContainer(DockerImageName image, File... composeFiles) {
+        this(image, Arrays.asList(composeFiles));
     }
 
-    public ComposeContainer(List<File> composeFiles) {
-        this(Base58.randomString(6).toLowerCase(), composeFiles);
+    public ComposeContainer(DockerImageName image, List<File> composeFiles) {
+        this(image, Base58.randomString(6).toLowerCase(), composeFiles);
     }
 
-    public ComposeContainer(String identifier, File... composeFiles) {
-        this(identifier, Arrays.asList(composeFiles));
+    public ComposeContainer(DockerImageName image, String identifier, File... composeFiles) {
+        this(image, identifier, Arrays.asList(composeFiles));
     }
 
-    public ComposeContainer(String identifier, List<File> composeFiles) {
+    public ComposeContainer(DockerImageName image, String identifier, List<File> composeFiles) {
         this.composeDelegate =
-            new ComposeDelegate(
-                ComposeDelegate.ComposeVersion.V2,
-                composeFiles,
-                identifier,
-                COMPOSE_EXECUTABLE,
-                DEFAULT_IMAGE_NAME
-            );
+            new ComposeDelegate(ComposeDelegate.ComposeVersion.V2, composeFiles, identifier, COMPOSE_EXECUTABLE, image);
         this.project = this.composeDelegate.getProject();
+    }
+
+    /**
+     * @deprecated
+     *  Use the new constructor ComposeContainer(DockerImageName image, File... composeFiles)
+     */
+    @Deprecated
+    public ComposeContainer(File... composeFiles) {
+        this(DEFAULT_IMAGE_NAME, Arrays.asList(composeFiles));
+    }
+
+    /**
+     * @deprecated
+     *  Use the new constructor ComposeContainer(DockerImageName image,List composeFiles)
+     */
+    @Deprecated
+    public ComposeContainer(List<File> composeFiles) {
+        this(DEFAULT_IMAGE_NAME, composeFiles);
+    }
+
+    /**
+     * @deprecated
+     *  Use the new constructor ComposeContainer(DockerImageName image, String identifier, File... composeFile)
+     */
+    @Deprecated
+    public ComposeContainer(String identifier, File... composeFiles) {
+        this(DEFAULT_IMAGE_NAME, identifier, Arrays.asList(composeFiles));
+    }
+
+    /**
+     * @deprecated
+     * Use the new constructor ComposeContainer(DockerImageName image,String identifier, List composeFiles)
+     */
+    @Deprecated
+    public ComposeContainer(String identifier, List<File> composeFiles) {
+        this(DEFAULT_IMAGE_NAME, identifier, composeFiles);
     }
 
     @Override

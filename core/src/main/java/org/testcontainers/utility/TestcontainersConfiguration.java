@@ -244,7 +244,7 @@ public class TestcontainersConfiguration {
         }
 
         for (final Properties properties : propertiesSources) {
-            if (properties.get(propertyName) != null) {
+            if (properties.get(propertyName) != null && !properties.get(propertyName).toString().trim().isEmpty()) {
                 return (String) properties.get(propertyName);
             }
         }
