@@ -171,7 +171,7 @@ public class VaultContainer<SELF extends VaultContainer<SELF>> extends GenericCo
      * {@link #addSecrets() addSecrets}, called from {@link #containerIsStarted(InspectContainerResponse) containerIsStarted}
      *
      * @param path             specific Vault path to store specified secrets
-     * @param firstSecret      first secret to add to specifed path
+     * @param firstSecret      first secret to add to specified path
      * @param remainingSecrets var args list of secrets to add to specified path
      * @return this
      * @deprecated use {@link #withInitCommand(String...)} instead

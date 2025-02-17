@@ -1,7 +1,7 @@
 # Injected by testcontainers
 # This file contains cluster properties which will only be considered when
 # starting the cluster for the first time. Afterwards, you can configure cluster
-# properties via the Redpanda Admi n API.
+# properties via the Redpanda Admin API.
 superusers:
 <#if kafkaApi.superusers?has_content >
     <#list kafkaApi.superusers as superuser>

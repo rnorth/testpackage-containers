@@ -260,7 +260,7 @@ public class SolaceContainer extends GenericContainer<SolaceContainer> {
      * Sets the solace server ceritificates
      *
      * @param certFile Server certificate
-     * @param caFile Certified Authority ceritificate
+     * @param caFile Certified Authority certificate
      * @return This container.
      */
     public SolaceContainer withClientCert(final MountableFile certFile, final MountableFile caFile) {

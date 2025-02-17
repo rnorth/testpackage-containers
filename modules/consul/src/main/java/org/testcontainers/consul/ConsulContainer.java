@@ -91,7 +91,7 @@ public class ConsulContainer extends GenericContainer<ConsulContainer> {
     /**
      * Run consul commands using the consul cli.
      *
-     * Useful for enableing more secret engines like:
+     * Useful for enabling more secret engines like:
      * <pre>
      *     .withConsulCommand("secrets enable pki")
      *     .withConsulCommand("secrets enable transit")

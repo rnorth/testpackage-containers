@@ -70,7 +70,7 @@ public class YugabyteDBYSQLContainer extends JdbcDatabaseContainer<YugabyteDBYSQ
      * Configures the environment variables. Setting up these variables would create the
      * custom objects. Setting {@link #withDatabaseName(String)},
      * {@link #withUsername(String)}, {@link #withPassword(String)} these parameters will
-     * initilaize the database with those custom values
+     * initialize the database with those custom values
      */
 
     @Override

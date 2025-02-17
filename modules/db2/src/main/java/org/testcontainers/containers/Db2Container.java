@@ -79,7 +79,7 @@ public class Db2Container extends JdbcDatabaseContainer<Db2Container> {
 
     @Override
     protected void configure() {
-        // If license was not accepted programatically, check if it was accepted via resource file
+        // If license was not accepted programmatically, check if it was accepted via resource file
         if (!getEnvMap().containsKey("LICENSE")) {
             LicenseAcceptance.assertLicenseAccepted(this.getDockerImageName());
             acceptLicense();

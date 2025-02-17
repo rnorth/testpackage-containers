@@ -281,7 +281,7 @@
 ## [1.1.8] - 2017-01-22
 ### Fixed
 - Compatibility fixes for Docker for Mac v1.13.0 ([\#272](https://github.com/testcontainers/testcontainers-java/issues/272))
-- Relax docker environment disk space check to accomodate unusual empty `df` output observed on Docker for Mac with OverlayFS ([\#273](https://github.com/testcontainers/testcontainers-java/issues/273), [\#278](https://github.com/testcontainers/testcontainers-java/issues/278))
+- Relax docker environment disk space check to accommodate unusual empty `df` output observed on Docker for Mac with OverlayFS ([\#273](https://github.com/testcontainers/testcontainers-java/issues/273), [\#278](https://github.com/testcontainers/testcontainers-java/issues/278))
 - Fix inadvertent private-scoping of startup checks' `StartupStatus`, which made implementation of custom startup checks impossible ([\#266](https://github.com/testcontainers/testcontainers-java/issues/266))
 - Fix potential resource lead/deadlock when errors are encountered building images from a Dockerfile ([\#274](https://github.com/testcontainers/testcontainers-java/issues/274))
 

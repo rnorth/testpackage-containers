@@ -37,7 +37,7 @@ public class DependenciesTest {
     }
 
     @Test
-    public void shouldWorkWithMutlipleDependencies() {
+    public void shouldWorkWithMultipleDependencies() {
         InvocationCountingStartable startable1 = new InvocationCountingStartable();
         InvocationCountingStartable startable2 = new InvocationCountingStartable();
 

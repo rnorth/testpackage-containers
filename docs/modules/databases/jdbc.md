@@ -135,7 +135,7 @@ By default database container is being stopped as soon as last connection is clo
 
  `jdbc:tc:mysql:8.0.36:///databasename?TC_DAEMON=true`
 
-With this parameter database container will keep running even when there're no open connections.
+With this parameter database container will keep running even when there's no open connections.
 
 
 ### Running container with tmpfs options

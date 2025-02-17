@@ -43,7 +43,7 @@ Now your tests or any other process running on your machine can get access to ru
 Create a `ConfluentKafkaContainer` to use it in your tests:
 
 <!--codeinclude-->
-[Creating a ConlfuentKafkaContainer](../../modules/kafka/src/test/java/org/testcontainers/kafka/ConfluentKafkaContainerTest.java) inside_block:constructorWithVersion
+[Creating a ConfluentKafkaContainer](../../modules/kafka/src/test/java/org/testcontainers/kafka/ConfluentKafkaContainerTest.java) inside_block:constructorWithVersion
 <!--/codeinclude-->
 
 ### Using org.testcontainers.kafka.KafkaContainer

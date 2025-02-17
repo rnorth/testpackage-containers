@@ -22,7 +22,7 @@ CosmosDBEmulatorContainer | [mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emula
 Start Azurite Emulator during a test:
 
 <!--codeinclude-->
-[Starting a Azurite container](../../modules/azure/src/test/java/org/testcontainers/azure/AzuriteContainerTest.java) inside_block:emulatorContainer
+[Starting an Azurite container](../../modules/azure/src/test/java/org/testcontainers/azure/AzuriteContainerTest.java) inside_block:emulatorContainer
 <!--/codeinclude-->
 
 !!! note
@@ -32,11 +32,11 @@ If the tested application needs to use more than one set of credentials, the con
 Please see some examples below.
 
 <!--codeinclude-->
-[Starting a Azurite Blob container with one account and two keys](../../modules/azure/src/test/java/org/testcontainers/azure/AzuriteContainerTest.java) inside_block:withTwoAccountKeys
+[Starting an Azurite Blob container with one account and two keys](../../modules/azure/src/test/java/org/testcontainers/azure/AzuriteContainerTest.java) inside_block:withTwoAccountKeys
 <!--/codeinclude-->
 
 <!--codeinclude-->
-[Starting a Azurite Blob container with more accounts and keys](../../modules/azure/src/test/java/org/testcontainers/azure/AzuriteContainerTest.java) inside_block:withMoreAccounts
+[Starting an Azurite Blob container with more accounts and keys](../../modules/azure/src/test/java/org/testcontainers/azure/AzuriteContainerTest.java) inside_block:withMoreAccounts
 <!--/codeinclude-->
 
 #### Using with Blob
@@ -140,7 +140,7 @@ Configure the sender and the processor clients:
 Start Azure CosmosDB Emulator during a test:
 
 <!--codeinclude-->
-[Starting a Azure CosmosDB Emulator container](../../modules/azure/src/test/java/org/testcontainers/containers/CosmosDBEmulatorContainerTest.java) inside_block:emulatorContainer
+[Starting an Azure CosmosDB Emulator container](../../modules/azure/src/test/java/org/testcontainers/containers/CosmosDBEmulatorContainerTest.java) inside_block:emulatorContainer
 <!--/codeinclude-->
 
 Prepare KeyStore to use for SSL.

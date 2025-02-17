@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 public class LazyFutureTest {
 
     @Test
-    public void testLazyness() throws Exception {
+    public void testLaziness() throws Exception {
         AtomicInteger counter = new AtomicInteger();
 
         Future<Integer> lazyFuture = new LazyFuture<Integer>() {

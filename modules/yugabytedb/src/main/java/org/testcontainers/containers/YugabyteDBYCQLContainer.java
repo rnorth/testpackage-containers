@@ -74,7 +74,7 @@ public class YugabyteDBYCQLContainer extends GenericContainer<YugabyteDBYCQLCont
      * Configures the environment variables. Setting up these variables would create the
      * custom objects. Setting {@link #withKeyspaceName(String)},
      * {@link #withUsername(String)}, {@link #withPassword(String)} these parameters will
-     * initilaize the database with those custom values
+     * initialize the database with those custom values
      */
     @Override
     protected void configure() {
@@ -123,7 +123,7 @@ public class YugabyteDBYCQLContainer extends GenericContainer<YugabyteDBYCQLCont
     }
 
     /**
-     * Executes the initilization script
+     * Executes the initialization script
      * @param containerInfo containerInfo
      */
     @Override

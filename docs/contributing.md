@@ -1,6 +1,6 @@
 # Contributing
 
-* Star the project on [Github](https://github.com/testcontainers/testcontainers-java) and help spread the word :)
+* Star the project on [GitHub](https://github.com/testcontainers/testcontainers-java) and help spread the word :)
 * Join our [Slack workspace](http://slack.testcontainers.org)
 * [Start a discussion](https://github.com/testcontainers/testcontainers-java/discussions) if you have an idea, find a possible bug or have a general question.
 * Contribute improvements or fixes using a [Pull Request](https://github.com/testcontainers/testcontainers-java/pulls). If you're going to contribute, thank you! Please just be sure to:
@@ -97,7 +97,7 @@ We will evaluate incubating modules periodically, and remove the label when appr
 Since we generally get a lot of Dependabot PRs, we regularly combine them into single commits.
 For this, we are using the [gh-combine-prs](https://github.com/rnorth/gh-combine-prs) extension for [GitHub CLI](https://cli.github.com/).
 
-The whole process is as follow:
+The whole process is as follows:
 
 1. Check that all open Dependabot PRs did succeed their build. If they did not succeed, trigger a rerun if the cause were external factors or else document the reason if obvious.
 2. Run the extension from an up-to-date local `main` branch: `gh combine-prs --query "author:app/dependabot"`

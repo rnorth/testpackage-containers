@@ -84,7 +84,7 @@ foo.doSomething();
 
 Note that:
 
-* Any code included will be have its indentation reduced
+* Any code included will have its indentation reduced
 * Every line in the source file will be searched for an instance of the token (e.g. `doFoo`). If more than one line
   includes that token, then potentially more than one block could be targeted for inclusion. It is advisable to use a
   specific, unique token to avoid unexpected behaviour.

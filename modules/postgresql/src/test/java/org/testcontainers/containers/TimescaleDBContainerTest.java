@@ -35,7 +35,7 @@ public class TimescaleDBContainerTest extends AbstractContainerDatabaseTest {
                 "SELECT current_setting('max_connections')"
             );
             String result = resultSet.getString(1);
-            assertThat(result).as("max_connections should be overriden").isEqualTo("42");
+            assertThat(result).as("max_connections should be overridden").isEqualTo("42");
         }
     }
 
@@ -54,7 +54,7 @@ public class TimescaleDBContainerTest extends AbstractContainerDatabaseTest {
                 "SELECT current_setting('max_connections')"
             );
             String result = resultSet.getString(1);
-            assertThat(result).as("max_connections should not be overriden").isNotEqualTo("42");
+            assertThat(result).as("max_connections should not be overridden").isNotEqualTo("42");
         }
     }
 

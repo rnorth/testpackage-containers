@@ -79,7 +79,7 @@ public class SimpleMariaDBTest extends AbstractContainerDatabaseTest {
             ResultSet resultSet = performQuery(mariadbCustomConfig, "show variables like 'auto_increment_increment'");
             String result = resultSet.getString("Value");
 
-            assertThat(result).as("Auto increment increment should be overriden by command line").isEqualTo("10");
+            assertThat(result).as("Auto increment increment should be overridden by command line").isEqualTo("10");
         }
     }
 

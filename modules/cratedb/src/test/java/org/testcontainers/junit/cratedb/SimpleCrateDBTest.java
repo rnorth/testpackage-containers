@@ -40,7 +40,7 @@ public class SimpleCrateDBTest extends AbstractContainerDatabaseTest {
 
             ResultSet resultSet = performQuery(cratedb, "select name from sys.cluster");
             String result = resultSet.getString(1);
-            assertThat(result).as("cluster name should be overriden").isEqualTo("testcontainers");
+            assertThat(result).as("cluster name should be overridden").isEqualTo("testcontainers");
         }
     }
 

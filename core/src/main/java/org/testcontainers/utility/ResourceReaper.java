@@ -368,7 +368,7 @@ public class ResourceReaper {
          * Registers the given filters with Ryuk
          *
          * @param filters the filter to register
-         * @return true if the filters have been registered successfuly, false otherwise
+         * @return true if the filters have been registered successfully, false otherwise
          * @throws IOException if communication with Ryuk fails
          */
         protected boolean register(List<Map.Entry<String, String>> filters) throws IOException {

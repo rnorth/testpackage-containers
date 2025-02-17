@@ -4,7 +4,7 @@ Testcontainers module for [Typesense](https://hub.docker.com/r/typesense/typesen
 
 ## TypesenseContainer's usage examples
 
-You can start an Typesense container instance from any Java application by using:
+You can start a Typesense container instance from any Java application by using:
 
 <!--codeinclude-->
 [Typesense container](../../modules/typesense/src/test/java/org/testcontainers/typesense/TypesenseContainerTest.java) inside_block:container
